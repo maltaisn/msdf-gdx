@@ -1,0 +1,19 @@
+/production/
+
+## IntelliJ
+/.idea/
+*.iml
+
+## Android
+/android/src/main/jniLibs/*/libgdx.so
+/android/gen/
+/android/src/main/assets
+
+## Gradle
+/local.properties
+/.gradle/
+build/
+
+## OS Specific
+.DS_Store
+Thumbs.db
