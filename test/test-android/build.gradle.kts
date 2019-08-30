@@ -23,6 +23,11 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_6
         targetCompatibility = JavaVersion.VERSION_1_6
     }
+    sourceSets {
+        named("main") {
+            java.srcDir("src/main/kotlin")  // Not necessary but works better with IntelliJ
+        }
+    }
 }
 
 val natives: Configuration by configurations.creating
