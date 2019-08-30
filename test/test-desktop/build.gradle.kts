@@ -3,7 +3,7 @@ plugins {
 }
 
 val assetsDir = file("../assets")
-val mainClassName = "com.msdfgdx.test.desktop.DesktopLauncher"
+val mainClassName = "com.maltaisn.msdfgdx.test.desktop.DesktopLauncher"
 
 dependencies {
     val gdxVersion: String by project
