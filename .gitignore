@@ -5,9 +5,9 @@
 *.iml
 
 ## Android
-/android/src/main/jniLibs/*/libgdx.so
-/android/gen/
-/android/src/main/assets
+/test/test-android/src/main/jniLibs/*/libgdx.so
+/test/test-android/gen/
+/test/test-android/src/main/assets
 
 ## Gradle
 /local.properties
