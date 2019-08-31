@@ -26,5 +26,6 @@ object TestRes {
     const val ATLAS = "test.atlas"
 
     const val FONT_ROBOTO = "roboto.fnt"
+    const val FONT_ROBOTO_BOLD = "roboto-bold.fnt"
 
 }

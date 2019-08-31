@@ -32,7 +32,7 @@ import ktx.actors.onClick
 import ktx.style.get
 
 
-class MsdfButton(skin: Skin, text: CharSequence? = null) : Table(skin) {
+open class MsdfButton(skin: Skin, text: CharSequence? = null) : Table(skin) {
 
     private val style: MsdfButtonStyle = skin.get()
 

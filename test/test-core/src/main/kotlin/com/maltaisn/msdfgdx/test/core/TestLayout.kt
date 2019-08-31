@@ -22,10 +22,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
-import com.badlogic.gdx.utils.Align
 import com.maltaisn.msdfgdx.FontStyle
 import com.maltaisn.msdfgdx.widget.MsdfLabel
-import ktx.actors.onClick
 import ktx.style.get
 
 
@@ -33,12 +31,10 @@ class TestLayout(skin: Skin) : Table(skin) {
 
     private val style: TestLayoutStyle = skin.get()
 
-    private val buttonTable = Table()
-
     private val fontStyle = FontStyle().apply {
         fontName = FONT_NAMES.first()
         color = FONT_COLORS.first()
-
+        weight = FontStyle.WEIGHT_REGULAR
     }
 
     private val textScrollPane: ScrollPane
@@ -50,12 +46,14 @@ class TestLayout(skin: Skin) : Table(skin) {
         textTable.background = style.background
         textTable.color = BG_COLORS.first()
 
+        val buttonTable = ButtonTable(skin)
+
         textScrollPane = ScrollPane(textTable)
         textScrollPane.setOverscroll(false, false)
         add(buttonTable).pad(20f).growY()
         add(textScrollPane).grow()
 
-        val sizeIndicator = addBtn("") {}
+        val sizeIndicator = buttonTable.addBtn("") {}
         sizeIndicator.enabled = false
 
         // Add labels
@@ -66,7 +64,7 @@ class TestLayout(skin: Skin) : Table(skin) {
                 override fun enter(event: InputEvent?, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
                     if (pointer == -1) {
                         label.debug = true
-                        sizeIndicator.title = "Size: ${label.fontStyle.size.toInt()}"
+                        sizeIndicator.title = "Size: ${label.fontStyle.size.toInt()} px"
                     }
                 }
 
@@ -84,29 +82,35 @@ class TestLayout(skin: Skin) : Table(skin) {
         updateFontStyle()
 
         // Add action buttons
-        addEnumBtn("Change text", TEXTS, null) { _, text ->
-            for (label in labels) {
-                label.txt = text
+        buttonTable.apply {
+            addEnumBtn("Change text", TEXTS, null) { _, text ->
+                for (label in labels) {
+                    label.txt = text
+                }
+            }
+            addEnumBtn("Font", FONT_NAMES, FONT_NAMES) { _, fontName ->
+                fontStyle.fontName = fontName
+                updateFontStyle()
+            }
+            addValueBtn("Weight", 0f, 1f, 0.5f, 0.05f) { _, weight, _ ->
+                fontStyle.weight = weight
+                updateFontStyle()
+            }
+            addEnumBtn("Color", FONT_COLORS, FONT_COLOR_NAMES) { _, color ->
+                fontStyle.color = color
+                stage?.debugColor?.set(fontStyle.color)
+                updateFontStyle()
+            }
+            addEnumBtn("BG color", BG_COLORS, BG_COLOR_NAMES) { _, color ->
+                textTable.color = color
+            }
+            addToggleBtn("All caps") { _, allCaps ->
+                fontStyle.isAllCaps = allCaps
+                updateFontStyle()
             }
         }
-        addEnumBtn("Font", FONT_NAMES, FONT_NAMES) { _, fontName ->
-            fontStyle.fontName = fontName
-            updateFontStyle()
-        }
-        addEnumBtn("Color", FONT_COLORS, FONT_COLOR_NAMES) { _, color ->
-            fontStyle.color = color
-            stage?.debugColor?.set(fontStyle.color)
-            updateFontStyle()
-        }
-        addEnumBtn("BG color", BG_COLORS, BG_COLOR_NAMES) { _, color ->
-            textTable.color = color
-        }
-        addToggleBtn("All caps") { _, allCaps ->
-            fontStyle.isAllCaps = allCaps
-            updateFontStyle()
-        }
 
-        buttonTable.add().grow().row()
+        buttonTable.add().grow().row()  // For aligning button to the top
     }
 
     override fun setStage(stage: Stage?) {
@@ -126,32 +130,6 @@ class TestLayout(skin: Skin) : Table(skin) {
         }
     }
 
-    private fun addBtn(title: String, action: (MsdfButton) -> Unit): MsdfButton {
-        val btn = MsdfButton(skin, title)
-        btn.onClick { action(btn) }
-        buttonTable.add(btn).align(Align.top).growX().padBottom(20f).row()
-        return btn
-    }
-
-    private fun addToggleBtn(title: String, action: (MsdfButton, checked: Boolean) -> Unit): MsdfButton {
-        val btn = addBtn(title) { action(it, it.checked) }
-        btn.checkable = true
-        return btn
-    }
-
-    private fun <T> addEnumBtn(title: String, values: List<T>,
-                               valueTitles: List<Any?>? = values,
-                               initialIndex: Int = 0,
-                               action: (MsdfButton, value: T) -> Unit): MsdfButton {
-        var selectedIndex = initialIndex
-        fun getTitle() = title + if (valueTitles != null) ": ${valueTitles[selectedIndex]}" else ""
-        return addBtn(getTitle()) {
-            selectedIndex = (selectedIndex + 1) % values.size
-            it.title = getTitle()
-            action(it, values[selectedIndex])
-        }
-    }
-
 
     class TestLayoutStyle {
         lateinit var background: Drawable
@@ -163,7 +141,7 @@ class TestLayout(skin: Skin) : Table(skin) {
                 "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýÿþ",
                 "!\"#\$%&'()*+,-./:;<=>?[\\]^_`{|}~¡¢£€¥Š§š©ª«¬®¯°±²³Žµ¶·ž¹º»ŒœŸ¿×")
 
-        val FONT_NAMES = listOf("roboto")
+        val FONT_NAMES = listOf("roboto", "roboto-bold")
 
         val FONT_COLORS = listOf(Color.BLACK, Color.WHITE, Color.BLUE, Color.RED)
         val FONT_COLOR_NAMES = listOf("black", "white", "blue", "red")

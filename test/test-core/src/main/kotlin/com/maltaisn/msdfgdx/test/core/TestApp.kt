@@ -46,6 +46,8 @@ class TestApp : ApplicationListener {
         skin.add("default", MsdfShader())
         skin.add("roboto", MsdfFont(Gdx.files.internal(
                 TestRes.FONT_ROBOTO), 42f, 4f))
+        skin.add("roboto-bold", MsdfFont(Gdx.files.internal(
+                TestRes.FONT_ROBOTO_BOLD), 42f, 4f))
 
         // Do the stage layout
         val layout = TestLayout(skin)

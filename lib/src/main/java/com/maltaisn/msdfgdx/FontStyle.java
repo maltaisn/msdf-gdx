@@ -23,9 +23,9 @@ import org.jetbrains.annotations.NotNull;
 
 public final class FontStyle {
 
-    public static final float WEIGHT_LIGHT = 0.3f;
+    public static final float WEIGHT_LIGHT = 0.4f;
     public static final float WEIGHT_REGULAR = 0.5f;
-    public static final float WEIGHT_BOLD = 0.7f;
+    public static final float WEIGHT_BOLD = 0.6f;
 
 
     /**
@@ -40,8 +40,10 @@ public final class FontStyle {
     private float size;
 
     /**
-     * The font weight, from 0 to 1.
-     * Higher values result in thicker fonts.
+     * The font weight, from 0 to 1. Higher values result in thicker fonts.
+     * The resulting effect depends on {@link MsdfFont#getDistanceRange()} and values
+     * near 0 and 1 will most likely produce rendering artifacts.
+     * 0.5 should always look the most like the original font.
      */
     private float weight = WEIGHT_REGULAR;
 
