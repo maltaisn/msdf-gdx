@@ -35,7 +35,7 @@ class ButtonTable(skin: Skin) : Table(skin) {
     fun addBtn(title: String, action: (MsdfButton) -> Unit): MsdfButton {
         val btn = MsdfButton(skin, title)
         btn.onClick { action(btn) }
-        add(btn).growX().padBottom(20f).row()
+        addBtn(btn)
         return btn
     }
 
@@ -63,7 +63,7 @@ class ButtonTable(skin: Skin) : Table(skin) {
                     numberFmt: NumberFormat? = NumberFormat.getInstance(),
                     action: (MsdfButton, Float, Float) -> Unit): ValueMenuButton {
         val btn = ValueMenuButton(skin, title, minValue, maxValue, startValue, step, numberFmt, action)
-        add(btn).growX().padBottom(20f).row()
+        addBtn(btn)
         return btn
     }
 
@@ -104,6 +104,10 @@ class ButtonTable(skin: Skin) : Table(skin) {
             title = if (numberFmt != null) "$valueTitle: ${numberFmt.format(value)}" else valueTitle
         }
 
+    }
+
+    private fun addBtn(btn: MsdfButton) {
+        add(btn).growX().padBottom(10f).row()
     }
 
 }
