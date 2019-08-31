@@ -36,6 +36,8 @@ import org.jetbrains.annotations.Nullable;
  */
 public class MsdfLabel extends Label implements Disableable {
 
+    private Skin skin;
+
     private MsdfShader shader;
     private MsdfFont font;
     private FontStyle fontStyle;
@@ -70,8 +72,8 @@ public class MsdfLabel extends Label implements Disableable {
         if (skin == null) throw new NullPointerException("Skin cannot be null");
         if (fontStyle == null) throw new NullPointerException("Font style cannot be null");
 
+        this.skin = skin;
         this.shader = skin.get(MsdfShader.class);
-        this.font = skin.get(fontStyle.getFontName(), MsdfFont.class);
 
         txt.append(text);
         setFontStyle(fontStyle);
@@ -116,6 +118,7 @@ public class MsdfLabel extends Label implements Disableable {
 
     public void setFontStyle(@NotNull FontStyle fontStyle) {
         this.fontStyle = fontStyle;
+        this.font = skin.get(fontStyle.getFontName(), MsdfFont.class);
         setFontScale(fontStyle.getSize() / font.getGlyphSize());
         super.setStyle(new LabelStyle(font.getFont(), fontStyle.getColor()));
         setTxt(txt);
@@ -125,22 +128,32 @@ public class MsdfLabel extends Label implements Disableable {
         return fontStyle;
     }
 
+    /**
+     * @deprecated Use {@link #setFillParent(boolean)}
+     */
+    @Deprecated
     @Override
-    public void setStyle(LabelStyle style) {
-    }
-
-    @Override
-    public LabelStyle getStyle() {
-        throw new UnsupportedOperationException("Use MsdfLabel.getFontStyle instead.");
+    public void setStyle(@NotNull LabelStyle style) {
+        // Do nothing. Can't throw exception since Label uses the method in its constructor.
     }
 
     /**
-     * Set the label background drawable
+     * @deprecated Use {@link #getFontStyle()}
+     */
+    @Deprecated
+    @Override
+    @NotNull
+    public LabelStyle getStyle() {
+        throw new UnsupportedOperationException("Use getFontStyle() instead.");
+    }
+
+    /**
+     * Set the label background drawable.
      *
      * @param background The new background, may be null.
      */
     public void setBackground(@Nullable Drawable background) {
-        getStyle().background = background;
+        super.getStyle().background = background;
         invalidateHierarchy();
     }
 
@@ -149,7 +162,7 @@ public class MsdfLabel extends Label implements Disableable {
      */
     @Nullable
     public Drawable getBackground() {
-        return getStyle().background;
+        return super.getStyle().background;
     }
 
     /**
