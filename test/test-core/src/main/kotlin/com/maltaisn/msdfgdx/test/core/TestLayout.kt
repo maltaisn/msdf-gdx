@@ -57,7 +57,7 @@ class TestLayout(skin: Skin) : Table(skin) {
         sizeIndicator.enabled = false
 
         // Add labels
-        repeat(20) {
+        repeat(SIZES.size) {
             val label = MsdfLabel(TEXTS.first(), skin, fontStyle)
             label.touchable = Touchable.enabled
             label.addListener(object : InputListener() {
@@ -122,10 +122,7 @@ class TestLayout(skin: Skin) : Table(skin) {
     private fun updateFontStyle() {
         for ((i, label) in labels.withIndex()) {
             val style = FontStyle(fontStyle)
-            style.size = 10f + i * 10f
-            if (i == 19) {
-                style.size = 512f
-            }
+            style.size = SIZES[i]
             label.fontStyle = style
         }
     }
@@ -136,18 +133,24 @@ class TestLayout(skin: Skin) : Table(skin) {
     }
 
     companion object {
-        val TEXTS = listOf("The quick brown fox jumps over the lazy dog",
+        private val SIZES = listOf(
+                10f, 12f, 14f, 16f, 18f, 20f,
+                24f, 28f, 32f, 36f, 40f,
+                50f, 60f, 70f, 80f, 90f, 100f,
+                128f, 196f, 256f, 384f, 512f)
+
+        private val TEXTS = listOf("The quick brown fox jumps over the lazy dog",
                 "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
                 "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýÿþ",
                 "!\"#\$%&'()*+,-./:;<=>?[\\]^_`{|}~¡¢£€¥Š§š©ª«¬®¯°±²³Žµ¶·ž¹º»ŒœŸ¿×")
 
-        val FONT_NAMES = listOf("roboto", "roboto-bold")
+        private val FONT_NAMES = listOf("roboto", "roboto-bold")
 
-        val FONT_COLORS = listOf(Color.BLACK, Color.WHITE, Color.BLUE, Color.RED)
-        val FONT_COLOR_NAMES = listOf("black", "white", "blue", "red")
+        private val FONT_COLORS = listOf(Color.BLACK, Color.WHITE, Color.BLUE, Color.RED)
+        private val FONT_COLOR_NAMES = listOf("black", "white", "blue", "red")
 
-        val BG_COLORS = listOf(Color.WHITE, Color.BLACK, Color.YELLOW, Color.CYAN)
-        val BG_COLOR_NAMES = listOf("white", "black", "yellow", "cyan")
+        private val BG_COLORS = listOf(Color.WHITE, Color.BLACK, Color.YELLOW, Color.CYAN)
+        private val BG_COLOR_NAMES = listOf("white", "black", "yellow", "cyan")
     }
 
 }
