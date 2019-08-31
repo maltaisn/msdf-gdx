@@ -108,4 +108,13 @@ public final class MsdfFont {
         return new TextureRegion(texture);
     }
 
+    @Override
+    public String toString() {
+        return "MsdfFont{" +
+                "font=" + font +
+                ", glyphSize=" + glyphSize +
+                ", distanceRange=" + distanceRange +
+                '}';
+    }
+
 }

@@ -124,4 +124,15 @@ public final class FontStyle {
         return this;
     }
 
+    @Override
+    public String toString() {
+        return "FontStyle{" +
+                "fontName='" + fontName + '\'' +
+                ", size=" + size +
+                ", weight=" + weight +
+                ", color=" + color +
+                ", allCaps=" + allCaps +
+                '}';
+    }
+
 }
