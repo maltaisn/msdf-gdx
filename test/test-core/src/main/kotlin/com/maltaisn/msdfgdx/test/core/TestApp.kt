@@ -19,12 +19,14 @@ package com.maltaisn.msdfgdx.test.core
 import com.badlogic.gdx.ApplicationListener
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
+import com.badlogic.gdx.assets.loaders.SkinLoader
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.maltaisn.msdfgdx.MsdfFont
 import com.maltaisn.msdfgdx.MsdfShader
+import ktx.assets.loadOnDemand
 
 class TestApp : ApplicationListener {
 
@@ -34,13 +36,16 @@ class TestApp : ApplicationListener {
 
     override fun create() {
         stage = Stage(ExtendViewport(1920f, 1080f))
+        Gdx.input.inputProcessor = stage
 
         // Load skin
-        val skin = Skin()
+        val skin = assetManager.loadOnDemand<Skin>(TestRes.SKIN,
+                SkinLoader.SkinParameter(TestRes.ATLAS)).asset
 
         // Create font and shader and add them to skin
         skin.add("default", MsdfShader())
-        skin.add("roboto", MsdfFont(Gdx.files.internal(TestRes.FONT_ROBOTO), 42f, 4f))
+        skin.add("roboto", MsdfFont(Gdx.files.internal(
+                TestRes.FONT_ROBOTO), 42f, 4f))
 
         // Do the stage layout
         val layout = TestLayout(skin)

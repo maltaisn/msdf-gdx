@@ -22,6 +22,9 @@ package com.maltaisn.msdfgdx.test.core
  */
 object TestRes {
 
+    const val SKIN = "test.skin"
+    const val ATLAS = "test.atlas"
+
     const val FONT_ROBOTO = "roboto.fnt"
 
 }

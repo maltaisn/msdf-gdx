@@ -1,0 +1,15 @@
+
+test.png
+size: 64,64
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+btn-background
+  rotate: false
+  xy: 4, 4
+  size: 30, 30
+  split: 14, 14, 14, 14
+  pad: 2, 2, 2, 2
+  orig: 30, 30
+  offset: 0, 0
+  index: -1

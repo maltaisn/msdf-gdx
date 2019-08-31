@@ -1,0 +1,16 @@
+{
+  Color: {
+    textWhite: { hex: #f4f4f4 }
+    textBlack: { hex: #0f0f0f }
+  }
+  com.maltaisn.msdfgdx.test.core.MsdfButton$MsdfButtonStyle: {
+    default: {
+      background: btn-background
+      titleFontStyle: {
+        fontName: roboto
+        size: 40
+        color: textBlack
+      }
+    }
+  }
+}

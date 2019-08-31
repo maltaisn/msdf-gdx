@@ -21,17 +21,24 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.maltaisn.msdfgdx.FontStyle
 import com.maltaisn.msdfgdx.widget.MsdfLabel
+import ktx.actors.onClick
+import ktx.log.info
 
 
 class TestLayout(skin: Skin) : Table(skin) {
 
     init {
+
         add(MsdfLabel("Test MSDF text", skin, FontStyle().apply {
             fontName = "roboto"
             size = 128f
             color = Color.BLACK
             weight = FontStyle.WEIGHT_REGULAR
-        })).expand()
+        })).expand().row()
+
+        val btn = MsdfButton(skin, "Test button")
+        btn.onClick { info { "Button clicked" } }
+        add(btn).expand()
     }
 
 }
