@@ -36,6 +36,13 @@ class MsdfButton(skin: Skin, text: CharSequence? = null) : Table(skin) {
 
     private val style: MsdfButtonStyle = skin.get()
 
+
+    var title: CharSequence?
+        get() = titleLabel.txt
+        set(value) {
+            titleLabel.txt = value
+        }
+
     var enabled = true
         set(value) {
             field = value

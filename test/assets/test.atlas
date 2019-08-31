@@ -1,15 +1,22 @@
 
 test.png
-size: 64,64
+size: 16,16
 format: RGBA8888
 filter: Linear,Linear
 repeat: none
+background
+  rotate: false
+  xy: 4, 10
+  size: 2, 2
+  split: 0, 0, 0, 0
+  orig: 2, 2
+  offset: 0, 0
+  index: -1
 btn-background
   rotate: false
   xy: 4, 4
-  size: 30, 30
-  split: 14, 14, 14, 14
-  pad: 2, 2, 2, 2
-  orig: 30, 30
+  size: 2, 2
+  split: 0, 0, 0, 0
+  orig: 2, 2
   offset: 0, 0
   index: -1
