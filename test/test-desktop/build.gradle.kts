@@ -35,7 +35,7 @@ tasks.register<JavaExec>("run") {
 }
 
 // Use this task to create a fat jar.
-// The jar file is generated in desktop/build/libs
+// The jar file is generated in test/test-desktop/build/libs
 tasks.register<Jar>("dist") {
     from(files(sourceSets.main.get().output.classesDirs))
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })

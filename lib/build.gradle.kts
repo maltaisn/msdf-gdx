@@ -17,6 +17,12 @@ dependencies {
 java {
     sourceCompatibility = JavaVersion.VERSION_1_6
     targetCompatibility = JavaVersion.VERSION_1_6
+
+    sourceSets {
+        main {
+            resources.srcDir("src/main/java")
+        }
+    }
 }
 
 // Maven publishing
