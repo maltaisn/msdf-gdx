@@ -42,12 +42,19 @@ class TestApp : ApplicationListener {
         val skin = assetManager.loadOnDemand<Skin>(TestRes.SKIN,
                 SkinLoader.SkinParameter(TestRes.ATLAS)).asset
 
-        // Create font and shader and add them to skin
+        // Create fonts and shader and add them to skin
         skin.add("default", MsdfShader())
+
         skin.add("roboto", MsdfFont(Gdx.files.internal(
                 TestRes.FONT_ROBOTO), 42f, 4f))
         skin.add("roboto-bold", MsdfFont(Gdx.files.internal(
                 TestRes.FONT_ROBOTO_BOLD), 42f, 4f))
+        skin.add("roboto-mono", MsdfFont(Gdx.files.internal(
+                TestRes.FONT_ROBOTO_MONO), 42f, 4f))
+        skin.add("satisfy", MsdfFont(Gdx.files.internal(
+                TestRes.FONT_SATISFY), 42f, 4f))
+        skin.add("lora", MsdfFont(Gdx.files.internal(
+                TestRes.FONT_LORA), 42f, 4f))
 
         // Do the stage layout
         val layout = TestLayout(skin)

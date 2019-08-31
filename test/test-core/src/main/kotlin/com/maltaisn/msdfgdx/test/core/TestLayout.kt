@@ -141,10 +141,10 @@ class TestLayout(skin: Skin) : Table(skin) {
 
         private val TEXTS = listOf("The quick brown fox jumps over the lazy dog",
                 "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-                "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýÿþ",
-                "!\"#\$%&'()*+,-./:;<=>?[\\]^_`{|}~¡¢£€¥Š§š©ª«¬®¯°±²³Žµ¶·ž¹º»ŒœŸ¿×")
+                "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýÿŸþŽžŠš",
+                "!\"#\$%&'()*+,-./:;<=>?[\\]^_`{|}~¡¢£€¥§©ª«¬®¯°±²³µ¶·¹º»Œœ¿×")
 
-        private val FONT_NAMES = listOf("roboto", "roboto-bold")
+        private val FONT_NAMES = listOf("roboto", "roboto-bold", "roboto-mono", "satisfy", "lora")
 
         private val FONT_COLORS = listOf(Color.BLACK, Color.WHITE, Color.BLUE, Color.RED)
         private val FONT_COLOR_NAMES = listOf("black", "white", "blue", "red")
