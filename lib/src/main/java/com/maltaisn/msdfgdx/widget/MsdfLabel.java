@@ -36,13 +36,13 @@ import org.jetbrains.annotations.Nullable;
  */
 public class MsdfLabel extends Label implements Disableable {
 
-    private Skin skin;
+    private final Skin skin;
+    private final MsdfShader shader;
 
-    private MsdfShader shader;
     private MsdfFont font;
     private FontStyle fontStyle;
 
-    private StringBuilder txt = new StringBuilder();
+    private final StringBuilder txt = new StringBuilder();
 
     private boolean disabled = false;
 
@@ -89,13 +89,13 @@ public class MsdfLabel extends Label implements Disableable {
         batch.setShader(null);
     }
 
-    public void setTxt(CharSequence newText) {
+    public void setTxt(@Nullable CharSequence newText) {
         if (newText != txt) {
             txt.setLength(0);
             txt.append(newText);
         }
 
-        if (fontStyle.isAllCaps()) {
+        if (fontStyle.isAllCaps() && newText != null) {
             // Not very memory-efficient...
             newText = newText.toString().toUpperCase();
         }
@@ -103,14 +103,21 @@ public class MsdfLabel extends Label implements Disableable {
     }
 
     @Override
-    public void setText(CharSequence newText) {
+    public void setText(@Nullable CharSequence newText) {
         setTxt(newText);
     }
 
+    /**
+     * Returns the label text that was set.
+     * If font style is all caps, the original text will be returned.
+     *
+     * @return the text, never null.
+     */
     public CharSequence getTxt() {
         return txt;
     }
 
+    @NotNull
     @Override
     public StringBuilder getText() {
         return txt;
@@ -124,6 +131,7 @@ public class MsdfLabel extends Label implements Disableable {
         setTxt(txt);
     }
 
+    @NotNull
     public FontStyle getFontStyle() {
         return fontStyle;
     }
