@@ -40,8 +40,8 @@ tasks.register<Jar>("javadocJar") {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "com.maltaisn.msdfgdx"
-            artifactId = "lib"
+            groupId = "com.maltaisn"
+            artifactId = "msdfgdx"
             version = rootProject.extra["libVersion"] as String
             pom {
                 name.set("Card game")
