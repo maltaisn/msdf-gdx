@@ -20,13 +20,16 @@ import com.badlogic.gdx.ApplicationListener
 import com.badlogic.gdx.Gdx
 import com.badlogic.gdx.assets.AssetManager
 import com.badlogic.gdx.assets.loaders.SkinLoader
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver
 import com.badlogic.gdx.graphics.GL20
 import com.badlogic.gdx.scenes.scene2d.Stage
 import com.badlogic.gdx.scenes.scene2d.ui.Skin
 import com.badlogic.gdx.utils.viewport.ExtendViewport
 import com.maltaisn.msdfgdx.MsdfFont
+import com.maltaisn.msdfgdx.MsdfFontLoader
 import com.maltaisn.msdfgdx.MsdfShader
 import ktx.assets.loadOnDemand
+import ktx.assets.setLoader
 
 class TestApp : ApplicationListener {
 
@@ -39,27 +42,26 @@ class TestApp : ApplicationListener {
         Gdx.input.inputProcessor = stage
 
         // Load skin
-        val skin = assetManager.loadOnDemand<Skin>(TestRes.SKIN,
-                SkinLoader.SkinParameter(TestRes.ATLAS)).asset
+        val skin = assetManager.loadOnDemand<Skin>(TestRes.SKIN, SkinLoader.SkinParameter(TestRes.ATLAS)).asset
 
-        // Create fonts and shader and add them to skin
+        // Create shader and add it to the skin.
         skin.add("default", MsdfShader())
 
-        skin.addTestFont("roboto", TestRes.FONT_ROBOTO)
-        skin.addTestFont("roboto-sdf", TestRes.FONT_ROBOTO_SDF)
-        skin.addTestFont("roboto-bold", TestRes.FONT_ROBOTO_BOLD)
-        skin.addTestFont("roboto-mono", TestRes.FONT_ROBOTO_MONO)
-        skin.addTestFont("satisfy", TestRes.FONT_SATISFY)
-        skin.addTestFont("lora", TestRes.FONT_LORA)
+        // Load fonts with the asset manager and add them to the skin.
+        val fontParam = MsdfFontLoader.MsdfFontParameter(42f, 6f)
+        assetManager.setLoader(MsdfFontLoader(InternalFileHandleResolver()))
+        skin.add("roboto", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO, fontParam).asset)
+        skin.add("roboto-sdf", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_SDF, fontParam).asset)
+        skin.add("roboto-bold", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_BOLD, fontParam).asset)
+        skin.add("roboto-mono", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_MONO, fontParam).asset)
+        skin.add("satisfy", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_SATISFY, fontParam).asset)
+        skin.add("lora", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_LORA, fontParam).asset)
 
         // Do the stage layout
         val layout = TestLayout(skin)
         layout.setFillParent(true)
         stage.addActor(layout)
     }
-
-    private fun Skin.addTestFont(name: String, fileName: String) =
-            add(name, MsdfFont(Gdx.files.internal(fileName), 42f, 4f))
 
     override fun render() {
         stage.act()

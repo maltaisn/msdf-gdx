@@ -33,6 +33,9 @@ import org.jetbrains.annotations.Nullable;
 /**
  * A label widget to display distance field font text.
  * Note that unlike {@link Label}, this widget makes an internal copy of its text.
+ *
+ * This widget expects to find a {@link MsdfShader} named "default" in the skin.
+ * The following should be done before: {@code skin.add("default", new MsdfShader())}
  */
 public class MsdfLabel extends Label implements Disableable {
 

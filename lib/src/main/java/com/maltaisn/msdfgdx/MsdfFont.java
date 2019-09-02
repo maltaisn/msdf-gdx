@@ -21,6 +21,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Disposable;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.NotNull;
  * Simple wrapper around {@link BitmapFont} to provide values
  * for the glyph size and distance range needed for rendering.
  */
-public final class MsdfFont {
+public final class MsdfFont implements Disposable {
 
     /**
      * The underlying bitmap font, never null.
@@ -101,6 +102,10 @@ public final class MsdfFont {
         return distanceRange;
     }
 
+    @Override
+    public void dispose() {
+        font.dispose();
+    }
 
     private static TextureRegion getFontRegionFromFile(FileHandle file) {
         Texture texture = new Texture(file, Pixmap.Format.RGBA8888, true);
