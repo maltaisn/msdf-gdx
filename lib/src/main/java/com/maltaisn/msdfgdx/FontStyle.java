@@ -61,15 +61,11 @@ public final class FontStyle {
     private boolean allCaps = false;
 
     /**
-     * Whether to draw shadow or not.
-     */
-    private boolean shadowDrawn = false;
-
-    /**
      * The drawn shadow color, can be translucent.
+     * Use transparent for no shadow.
      */
     @NotNull
-    private Color shadowColor = Color.BLACK;
+    private Color shadowColor = new Color();
 
     /**
      * The drawn shadow offset in pixels, relative to the size of glyph in the font image.
@@ -86,6 +82,7 @@ public final class FontStyle {
 
     /**
      * Defines the smoothess of the shadow edges. Value should be between 0 to 0.5.
+     * A value of 0 looks rough because it doesn't have antialiasing.
      */
     private float shadowSmoothing = 0.1f;
 
@@ -100,7 +97,6 @@ public final class FontStyle {
         weight = style.weight;
         color = style.color.cpy();
         allCaps = style.allCaps;
-        shadowDrawn = style.shadowDrawn;
         shadowOffset = style.shadowOffset.cpy();
         shadowColor = style.shadowColor.cpy();
         shadowSmoothing = style.shadowSmoothing;
@@ -160,15 +156,6 @@ public final class FontStyle {
         return this;
     }
 
-    public boolean isShadowDrawn() {
-        return shadowDrawn;
-    }
-
-    public FontStyle setShadowDrawn(boolean shadowDrawn) {
-        this.shadowDrawn = shadowDrawn;
-        return this;
-    }
-
     @NotNull
     public Color getShadowColor() {
         return shadowColor;
@@ -217,9 +204,7 @@ public final class FontStyle {
         str.append(color);
         str.append(", allCaps=");
         str.append(allCaps);
-        str.append(", shadowDrawn=");
-        str.append(shadowDrawn);
-        if (shadowDrawn) {
+        if (shadowColor.a != 0) {
             str.append(", shadowColor=");
             str.append(shadowColor);
             str.append(", shadowOffset=");

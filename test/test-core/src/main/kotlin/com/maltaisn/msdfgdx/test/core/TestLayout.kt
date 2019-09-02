@@ -36,6 +36,7 @@ class TestLayout(skin: Skin) : Table(skin) {
         fontName = FONT_NAMES.first()
         color = FONT_COLORS.first().cpy()
         weight = FontStyle.WEIGHT_REGULAR
+        shadowColor.set(1f, 1f, 1f, 0f)
         shadowOffset.set(2f, 2f)
     }
 
@@ -118,11 +119,13 @@ class TestLayout(skin: Skin) : Table(skin) {
                 updateFontStyle()
             }
             addToggleBtn("Draw shadow") { _, shadowDrawn ->
-                fontStyle.isShadowDrawn = shadowDrawn
+                fontStyle.shadowColor.a = if (shadowDrawn) 1f else 0f
                 updateFontStyle()
             }
             addEnumBtn("Shadow color", SHADOW_COLORS, SHADOW_COLOR_NAMES) { _, color ->
-                fontStyle.shadowColor = color.cpy()
+                val shadowColor = color.cpy()
+                shadowColor.a = fontStyle.shadowColor.a
+                fontStyle.shadowColor = shadowColor
                 updateFontStyle()
             }
             addValueBtn("Shadow offset X", -4f, 4f, 2f, 0.5f) { _, offset, _ ->

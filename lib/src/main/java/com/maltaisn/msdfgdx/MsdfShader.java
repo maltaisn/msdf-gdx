@@ -51,7 +51,6 @@ public class MsdfShader extends ShaderProgram {
 
         setUniformf("fontWeight", style.getWeight());
 
-        setUniformi("shadowDrawn", style.isShadowDrawn() ? 1 : 0);
         setUniformf("shadowColor", style.getShadowColor());
         setUniformf("shadowOffset", style.getShadowOffset());
         setUniformf("shadowSmoothing", style.getShadowSmoothing());
