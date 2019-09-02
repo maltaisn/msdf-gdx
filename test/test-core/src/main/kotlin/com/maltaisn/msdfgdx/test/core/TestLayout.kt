@@ -25,6 +25,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.maltaisn.msdfgdx.FontStyle
 import com.maltaisn.msdfgdx.widget.MsdfLabel
 import ktx.style.get
+import java.text.NumberFormat
 
 
 class TestLayout(skin: Skin) : Table(skin) {
@@ -33,8 +34,9 @@ class TestLayout(skin: Skin) : Table(skin) {
 
     private val fontStyle = FontStyle().apply {
         fontName = FONT_NAMES.first()
-        color = FONT_COLORS.first()
+        color = FONT_COLORS.first().cpy()
         weight = FontStyle.WEIGHT_REGULAR
+        shadowOffset.set(2f, 2f)
     }
 
     private val textScrollPane: ScrollPane
@@ -53,7 +55,7 @@ class TestLayout(skin: Skin) : Table(skin) {
         add(buttonTable).pad(20f).growY()
         add(textScrollPane).grow()
 
-        val sizeIndicator = buttonTable.addBtn("") {}
+        val sizeIndicator = buttonTable.addBtn("Size: --") {}
         sizeIndicator.enabled = false
 
         // Add labels
@@ -92,20 +94,47 @@ class TestLayout(skin: Skin) : Table(skin) {
                 fontStyle.fontName = fontName
                 updateFontStyle()
             }
-            addValueBtn("Weight", 0f, 1f, 0.5f, 0.05f) { _, weight, _ ->
+            addValueBtn("Weight", -0.5f, 0.5f, 0f, 0.05f) { _, weight, _ ->
                 fontStyle.weight = weight
                 updateFontStyle()
             }
             addEnumBtn("Color", FONT_COLORS, FONT_COLOR_NAMES) { _, color ->
-                fontStyle.color = color
-                stage?.debugColor?.set(fontStyle.color)
+                val fontColor = color.cpy()
+                fontColor.a = fontStyle.color.a
+                fontStyle.color = fontColor
+                stage?.debugColor?.set(fontColor)
                 updateFontStyle()
             }
-            addEnumBtn("BG color", BG_COLORS, BG_COLOR_NAMES) { _, color ->
-                textTable.color = color
+            addValueBtn("Opacity", 0f, 1f, 1f, -0.1f,
+                    NumberFormat.getPercentInstance()) { _, opacity, _ ->
+                fontStyle.color.a = opacity
+                updateFontStyle()
+            }
+            addEnumBtn("Background color", BG_COLORS, BG_COLOR_NAMES) { _, color ->
+                textTable.color = color.cpy()
             }
             addToggleBtn("All caps") { _, allCaps ->
                 fontStyle.isAllCaps = allCaps
+                updateFontStyle()
+            }
+            addToggleBtn("Draw shadow") { _, shadowDrawn ->
+                fontStyle.isShadowDrawn = shadowDrawn
+                updateFontStyle()
+            }
+            addEnumBtn("Shadow color", SHADOW_COLORS, SHADOW_COLOR_NAMES) { _, color ->
+                fontStyle.shadowColor = color.cpy()
+                updateFontStyle()
+            }
+            addValueBtn("Shadow offset X", -4f, 4f, 2f, 0.5f) { _, offset, _ ->
+                fontStyle.shadowOffset.x = offset
+                updateFontStyle()
+            }
+            addValueBtn("Shadow offset Y", -4f, 4f, 2f, 0.5f) { _, offset, _ ->
+                fontStyle.shadowOffset.y = offset
+                updateFontStyle()
+            }
+            addValueBtn("Shadow smoothing", 0f, 0.5f, 0.1f, 0.1f) { _, smoothing, _ ->
+                fontStyle.shadowSmoothing = smoothing
                 updateFontStyle()
             }
         }
@@ -144,13 +173,17 @@ class TestLayout(skin: Skin) : Table(skin) {
                 "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýÿŸþŽžŠš",
                 "!\"#\$%&'()*+,-./:;<=>?[\\]^_`{|}~¡¢£€¥§©ª«¬®¯°±²³µ¶·¹º»Œœ¿×")
 
-        private val FONT_NAMES = listOf("roboto", "roboto-bold", "roboto-mono", "satisfy", "lora")
+        private val FONT_NAMES = listOf("roboto", "roboto-sdf", "roboto-bold",
+                "roboto-mono", "satisfy", "lora")
 
         private val FONT_COLORS = listOf(Color.BLACK, Color.WHITE, Color.BLUE, Color.RED)
         private val FONT_COLOR_NAMES = listOf("black", "white", "blue", "red")
 
         private val BG_COLORS = listOf(Color.WHITE, Color.BLACK, Color.YELLOW, Color.CYAN)
         private val BG_COLOR_NAMES = listOf("white", "black", "yellow", "cyan")
+
+        private val SHADOW_COLORS = listOf(Color.WHITE, Color.BLACK, Color.YELLOW, Color.CYAN)
+        private val SHADOW_COLOR_NAMES = listOf("white", "black", "yellow", "cyan")
     }
 
 }

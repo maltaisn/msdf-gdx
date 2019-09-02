@@ -103,7 +103,7 @@ public final class MsdfFont {
 
 
     private static TextureRegion getFontRegionFromFile(FileHandle file) {
-        Texture texture = new Texture(file, Pixmap.Format.RGB888, true);
+        Texture texture = new Texture(file, Pixmap.Format.RGBA8888, true);
         texture.setFilter(Texture.TextureFilter.MipMapLinearNearest, Texture.TextureFilter.Linear);
         return new TextureRegion(texture);
     }

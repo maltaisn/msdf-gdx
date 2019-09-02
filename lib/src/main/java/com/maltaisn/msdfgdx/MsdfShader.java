@@ -23,7 +23,18 @@ import com.badlogic.gdx.utils.GdxRuntimeException;
 
 
 /**
- * The shader used to render the MSDF text to the sprite batch.
+ * The shader used to render the text to the sprite batch.
+ * The glyph uses the values encoded in the RGB channels (MSDF).
+ * The shadow uses the values encoded in the alpha channel (SDF).
+ * Since a standard SDF font also encodes values in the RGB channels,
+ * this shader can also be used to render standard SDF fonts.
+ *
+ * References:
+ * <ul>
+ * <li>https://github.com/Chlumsky/msdfgen/files/3050967/thesis.pdf</li>
+ * <li>https://github.com/Chlumsky/msdfgen/issues/36</li>
+ * <li>http://inter-illusion.com/assets/I2SmartEdgeManual/SmartEdge.html?WhatSDFFormattouse.html</li>
+ * </ul>
  */
 public class MsdfShader extends ShaderProgram {
 
@@ -37,7 +48,13 @@ public class MsdfShader extends ShaderProgram {
 
     public void updateForFont(MsdfFont font, FontStyle style) {
         setUniformf("distanceRange", font.getDistanceRange());
+
         setUniformf("fontWeight", style.getWeight());
+
+        setUniformi("shadowDrawn", style.isShadowDrawn() ? 1 : 0);
+        setUniformf("shadowColor", style.getShadowColor());
+        setUniformf("shadowOffset", style.getShadowOffset());
+        setUniformf("shadowSmoothing", style.getShadowSmoothing());
     }
 
 }

@@ -7,7 +7,7 @@
       background: btn-background
       titleFontStyle: {
         fontName: roboto
-        size: 36
+        size: 30
         color: black
       }
     }

@@ -45,22 +45,21 @@ class TestApp : ApplicationListener {
         // Create fonts and shader and add them to skin
         skin.add("default", MsdfShader())
 
-        skin.add("roboto", MsdfFont(Gdx.files.internal(
-                TestRes.FONT_ROBOTO), 42f, 4f))
-        skin.add("roboto-bold", MsdfFont(Gdx.files.internal(
-                TestRes.FONT_ROBOTO_BOLD), 42f, 4f))
-        skin.add("roboto-mono", MsdfFont(Gdx.files.internal(
-                TestRes.FONT_ROBOTO_MONO), 42f, 4f))
-        skin.add("satisfy", MsdfFont(Gdx.files.internal(
-                TestRes.FONT_SATISFY), 42f, 4f))
-        skin.add("lora", MsdfFont(Gdx.files.internal(
-                TestRes.FONT_LORA), 42f, 4f))
+        skin.addTestFont("roboto", TestRes.FONT_ROBOTO)
+        skin.addTestFont("roboto-sdf", TestRes.FONT_ROBOTO_SDF)
+        skin.addTestFont("roboto-bold", TestRes.FONT_ROBOTO_BOLD)
+        skin.addTestFont("roboto-mono", TestRes.FONT_ROBOTO_MONO)
+        skin.addTestFont("satisfy", TestRes.FONT_SATISFY)
+        skin.addTestFont("lora", TestRes.FONT_LORA)
 
         // Do the stage layout
         val layout = TestLayout(skin)
         layout.setFillParent(true)
         stage.addActor(layout)
     }
+
+    private fun Skin.addTestFont(name: String, fileName: String) =
+            add(name, MsdfFont(Gdx.files.internal(fileName), 42f, 4f))
 
     override fun render() {
         stage.act()
