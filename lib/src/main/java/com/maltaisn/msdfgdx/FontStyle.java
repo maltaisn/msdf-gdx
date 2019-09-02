@@ -38,7 +38,7 @@ public final class FontStyle {
     /**
      * The font size in pixels.
      */
-    private float size;
+    private float size = 42f;
 
     /**
      * The font weight, from -0.5 to 0.5. Higher values result in thicker fonts.
