@@ -38,6 +38,7 @@ class TestLayout(skin: Skin) : Table(skin) {
         weight = FontStyle.WEIGHT_REGULAR
         shadowColor.set(1f, 1f, 1f, 0f)
         shadowOffset.set(2f, 2f)
+        innerShadowColor.set(0f, 0f, 0f, 0f)
     }
 
     private val textScrollPane: ScrollPane
@@ -138,6 +139,20 @@ class TestLayout(skin: Skin) : Table(skin) {
             }
             addValueBtn("Shadow smoothing", 0f, 0.5f, 0.1f, 0.1f) { _, smoothing, _ ->
                 fontStyle.shadowSmoothing = smoothing
+                updateFontStyle()
+            }
+            addToggleBtn("Draw inner shadow") { _, shadowDrawn ->
+                fontStyle.innerShadowColor.a = if (shadowDrawn) 1f else 0f
+                updateFontStyle()
+            }
+            addEnumBtn("Inner shadow color", SHADOW_COLORS, SHADOW_COLOR_NAMES, 1) { _, color ->
+                val shadowColor = color.cpy()
+                shadowColor.a = fontStyle.innerShadowColor.a
+                fontStyle.innerShadowColor = shadowColor
+                updateFontStyle()
+            }
+            addValueBtn("Inner shadow range", 0f, 0.5f, 0.3f, 0.1f) { _, range, _ ->
+                fontStyle.innerShadowRange = range
                 updateFontStyle()
             }
         }

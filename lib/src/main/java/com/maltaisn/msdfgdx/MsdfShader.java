@@ -54,6 +54,9 @@ public class MsdfShader extends ShaderProgram {
         setUniformf("shadowColor", style.getShadowColor());
         setUniformf("shadowOffset", style.getShadowOffset());
         setUniformf("shadowSmoothing", style.getShadowSmoothing());
+
+        setUniformf("innerShadowColor", style.getInnerShadowColor());
+        setUniformf("innerShadowRange", style.getInnerShadowRange());
     }
 
 }

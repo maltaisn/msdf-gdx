@@ -61,7 +61,7 @@ public final class FontStyle {
     private boolean allCaps = false;
 
     /**
-     * The drawn shadow color, can be translucent.
+     * The color of the outer shadow, can be translucent.
      * Use transparent for no shadow.
      */
     @NotNull
@@ -87,6 +87,19 @@ public final class FontStyle {
     private float shadowSmoothing = 0.1f;
 
 
+    /**
+     * The color of the inner shadow, can be translucent.
+     * Use transparent for no shadow.
+     */
+    @NotNull
+    private Color innerShadowColor = new Color();
+
+    /**
+     * The inner shadow range, from 0 to 0.5.
+     */
+    private float innerShadowRange = 0.3f;
+
+
     public FontStyle() {
         // Default constructor
     }
@@ -100,6 +113,8 @@ public final class FontStyle {
         shadowOffset = style.shadowOffset.cpy();
         shadowColor = style.shadowColor.cpy();
         shadowSmoothing = style.shadowSmoothing;
+        innerShadowColor = style.innerShadowColor.cpy();
+        innerShadowRange = style.innerShadowRange;
     }
 
 
@@ -186,9 +201,30 @@ public final class FontStyle {
         return shadowSmoothing;
     }
 
-    public void setShadowSmoothing(float shadowSmoothing) {
+    public FontStyle setShadowSmoothing(float shadowSmoothing) {
         this.shadowSmoothing = shadowSmoothing;
+        return this;
     }
+
+    @NotNull
+    public Color getInnerShadowColor() {
+        return innerShadowColor;
+    }
+
+    public FontStyle setInnerShadowColor(@NotNull Color innerShadowColor) {
+        this.innerShadowColor = innerShadowColor;
+        return this;
+    }
+
+    public float getInnerShadowRange() {
+        return innerShadowRange;
+    }
+
+    public FontStyle setInnerShadowRange(float innerShadowRange) {
+        this.innerShadowRange = innerShadowRange;
+        return this;
+    }
+
 
     @Override
     public String toString() {
@@ -212,7 +248,12 @@ public final class FontStyle {
             str.append(", shadowSmoothing=");
             str.append(shadowSmoothing);
         }
+        if (innerShadowColor.a != 0) {
+            str.append(", innerShadowColor=");
+            str.append(innerShadowColor);
+        }
         str.append('}');
         return str.toString();
     }
+
 }
