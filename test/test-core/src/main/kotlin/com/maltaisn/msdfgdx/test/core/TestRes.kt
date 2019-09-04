@@ -25,11 +25,11 @@ object TestRes {
     const val SKIN = "test.skin"
     const val ATLAS = "test.atlas"
 
-    const val FONT_ROBOTO = "font/roboto.fnt"
-    const val FONT_ROBOTO_SDF = "font/roboto-sdf.fnt"
-    const val FONT_ROBOTO_BOLD = "font/roboto-bold.fnt"
-    const val FONT_ROBOTO_MONO = "font/roboto-mono.fnt"
-    const val FONT_SATISFY = "font/satisfy.fnt"
-    const val FONT_LORA = "font/lora.fnt"
+    const val FONT_ROBOTO_16 = "font/roboto-16.fnt"
+    const val FONT_ROBOTO_24 = "font/roboto-24.fnt"
+    const val FONT_ROBOTO_32 = "font/roboto-32.fnt"
+    const val FONT_ROBOTO_40 = "font/roboto-40.fnt"
+    const val FONT_ROBOTO_40_SDF = "font/roboto-40-sdf.fnt"
+    const val FONT_ROBOTO_BOLD_40 = "font/roboto-bold-40.fnt"
 
 }

@@ -38,7 +38,7 @@ public final class FontStyle {
     /**
      * The font size in pixels.
      */
-    private float size = 42f;
+    private float size = 32f;
 
     /**
      * The font weight, from -0.5 to 0.5. Higher values result in thicker fonts.
@@ -78,7 +78,7 @@ public final class FontStyle {
      * </ul>
      */
     @NotNull
-    private Vector2 shadowOffset = new Vector2(0, 0);
+    private Vector2 shadowOffset = new Vector2(2f, 2f);
 
     /**
      * Defines the smoothess of the shadow edges. Value should be between 0 to 0.5.

@@ -1,3 +1,3 @@
 @echo off
-msdf-bmfont -f xml -i charset.txt -s 42 -r 6 -t msdf --pot --square --smart-size %1
+msdf-bmfont -f xml -i charset.txt -s 32 -r 5 -t msdf --pot --smart-size %1
 pause

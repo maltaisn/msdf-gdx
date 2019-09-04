@@ -48,14 +48,20 @@ class TestApp : ApplicationListener {
         skin.add("default", MsdfShader())
 
         // Load fonts with the asset manager and add them to the skin.
-        val fontParam = MsdfFontLoader.MsdfFontParameter(42f, 6f)
         assetManager.setLoader(MsdfFontLoader(InternalFileHandleResolver()))
-        skin.add("roboto", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO, fontParam).asset)
-        skin.add("roboto-sdf", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_SDF, fontParam).asset)
-        skin.add("roboto-bold", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_BOLD, fontParam).asset)
-        skin.add("roboto-mono", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_MONO, fontParam).asset)
-        skin.add("satisfy", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_SATISFY, fontParam).asset)
-        skin.add("lora", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_LORA, fontParam).asset)
+
+        skin.add("roboto-16", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_16,
+                MsdfFontLoader.MsdfFontParameter(16f, 3f)).asset)
+        skin.add("roboto-24", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_24,
+                MsdfFontLoader.MsdfFontParameter(24f, 4f)).asset)
+        skin.add("roboto-32", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_32,
+                MsdfFontLoader.MsdfFontParameter(32f, 5f)).asset)
+        skin.add("roboto-40", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_40,
+                MsdfFontLoader.MsdfFontParameter(40f, 6f)).asset)
+        skin.add("roboto-40-sdf", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_40_SDF,
+                MsdfFontLoader.MsdfFontParameter(40f, 6f)).asset)
+        skin.add("roboto-bold-40", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_BOLD_40,
+                MsdfFontLoader.MsdfFontParameter(40f, 6f)).asset)
 
         // Do the stage layout
         val layout = TestLayout(skin)
