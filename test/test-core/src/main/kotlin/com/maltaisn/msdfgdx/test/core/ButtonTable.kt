@@ -32,6 +32,11 @@ import kotlin.math.round
  */
 class ButtonTable(skin: Skin) : Table(skin) {
 
+    init {
+        pad(20f)
+    }
+
+
     fun addBtn(title: String, action: (MsdfButton) -> Unit): MsdfButton {
         val btn = MsdfButton(skin, title)
         btn.onClick { action(btn) }
@@ -61,16 +66,16 @@ class ButtonTable(skin: Skin) : Table(skin) {
     fun addValueBtn(title: String,
                     minValue: Float, maxValue: Float, startValue: Float, step: Float,
                     numberFmt: NumberFormat? = NumberFormat.getInstance(),
-                    action: (MsdfButton, Float, Float) -> Unit): ValueMenuButton {
-        val btn = ValueMenuButton(skin, title, minValue, maxValue, startValue, step, numberFmt, action)
+                    action: (MsdfButton, Float, Float) -> Unit): ValueMsdfBtn {
+        val btn = ValueMsdfBtn(skin, title, minValue, maxValue, startValue, step, numberFmt, action)
         addBtn(btn)
         return btn
     }
 
-    class ValueMenuButton(skin: Skin, private val valueTitle: String,
-                          minValue: Float, maxValue: Float, startValue: Float, step: Float,
-                          private val numberFmt: NumberFormat? = NumberFormat.getInstance(),
-                          private val action: (MsdfButton, value: Float, oldValue: Float) -> Unit) :
+    class ValueMsdfBtn(skin: Skin, private val valueTitle: String,
+                       minValue: Float, maxValue: Float, startValue: Float, step: Float,
+                       private val numberFmt: NumberFormat? = NumberFormat.getInstance(),
+                       private val action: (MsdfButton, value: Float, oldValue: Float) -> Unit) :
             MsdfButton(skin, null) {
 
         private val min = step * round(minValue / step)
@@ -107,7 +112,7 @@ class ButtonTable(skin: Skin) : Table(skin) {
     }
 
     private fun addBtn(btn: MsdfButton) {
-        add(btn).growX().padBottom(10f).row()
+        add(btn).growX().padBottom(15f).row()
     }
 
 }

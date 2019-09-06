@@ -50,17 +50,32 @@ class TestLayout(skin: Skin) : Table(skin) {
         textTable.background = style.background
         textTable.color = BG_COLORS.first()
 
-        val buttonTable = ButtonTable(skin)
+        val btnTable = ButtonTable(skin)
+        val btnScrollPane = ScrollPane(btnTable)
+        btnScrollPane.setScrollingDisabled(true, false)
+        btnScrollPane.setOverscroll(false, false)
+        btnTable.addListener(object : InputListener() {
+            override fun enter(event: InputEvent, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
+                stage.scrollFocus = btnTable
+            }
+        })
 
         textScrollPane = ScrollPane(textTable)
         textScrollPane.setOverscroll(false, false)
-        add(buttonTable).pad(20f).growY()
+        textScrollPane.addListener(object : InputListener() {
+            override fun enter(event: InputEvent, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
+                stage.scrollFocus = textScrollPane
+            }
+        })
+
+        // Do the layout
+        add(btnScrollPane).width(450f).growY()
         add(textScrollPane).grow()
 
-        val sizeIndicator = buttonTable.addBtn("Size: --") {}
+        // Add labels
+        val sizeIndicator = btnTable.addBtn("Size: --") {}
         sizeIndicator.enabled = false
 
-        // Add labels
         repeat(SIZES.size) {
             val label = MsdfLabel(TEXTS.first(), skin, fontStyle)
             label.touchable = Touchable.enabled
@@ -86,7 +101,10 @@ class TestLayout(skin: Skin) : Table(skin) {
         updateFontStyle()
 
         // Add action buttons
-        buttonTable.apply {
+        btnTable.apply {
+            lateinit var shadowOpacityBtn: ButtonTable.ValueMsdfBtn
+            lateinit var inShadowOpacityBtn: ButtonTable.ValueMsdfBtn
+
             addEnumBtn("Change text", TEXTS, null) { _, text ->
                 for (label in labels) {
                     label.txt = text
@@ -120,13 +138,18 @@ class TestLayout(skin: Skin) : Table(skin) {
                 updateFontStyle()
             }
             addToggleBtn("Draw shadow") { _, shadowDrawn ->
-                fontStyle.shadowColor.a = if (shadowDrawn) 1f else 0f
+                fontStyle.shadowColor.a = if (shadowDrawn) shadowOpacityBtn.value else 0f
                 updateFontStyle()
             }
             addEnumBtn("Shadow color", SHADOW_COLORS, SHADOW_COLOR_NAMES) { _, color ->
                 val shadowColor = color.cpy()
                 shadowColor.a = fontStyle.shadowColor.a
                 fontStyle.shadowColor = shadowColor
+                updateFontStyle()
+            }
+            shadowOpacityBtn = addValueBtn("Shadow opacity", 0f, 1f, 1f, -0.1f,
+                    NumberFormat.getPercentInstance()) { _, opacity, _ ->
+                fontStyle.shadowColor.a = opacity
                 updateFontStyle()
             }
             addValueBtn("Shadow offset X", -4f, 4f, 2f, 0.5f) { _, offset, _ ->
@@ -141,23 +164,28 @@ class TestLayout(skin: Skin) : Table(skin) {
                 fontStyle.shadowSmoothing = smoothing
                 updateFontStyle()
             }
-            addToggleBtn("Draw inner shadow") { _, shadowDrawn ->
-                fontStyle.innerShadowColor.a = if (shadowDrawn) 1f else 0f
+            addToggleBtn("Draw in shadow") { _, shadowDrawn ->
+                fontStyle.innerShadowColor.a = if (shadowDrawn) inShadowOpacityBtn.value else 0f
                 updateFontStyle()
             }
-            addEnumBtn("Inner shadow color", SHADOW_COLORS, SHADOW_COLOR_NAMES, 1) { _, color ->
+            addEnumBtn("In shadow color", SHADOW_COLORS, SHADOW_COLOR_NAMES, 1) { _, color ->
                 val shadowColor = color.cpy()
                 shadowColor.a = fontStyle.innerShadowColor.a
                 fontStyle.innerShadowColor = shadowColor
                 updateFontStyle()
             }
-            addValueBtn("Inner shadow range", 0f, 0.5f, 0.3f, 0.1f) { _, range, _ ->
+            inShadowOpacityBtn = addValueBtn("In shadow opacity", 0f, 1f, 1f, -0.1f,
+                    NumberFormat.getPercentInstance()) { _, opacity, _ ->
+                fontStyle.innerShadowColor.a = opacity
+                updateFontStyle()
+            }
+            addValueBtn("In shadow range", 0f, 0.5f, 0.3f, 0.1f) { _, range, _ ->
                 fontStyle.innerShadowRange = range
                 updateFontStyle()
             }
         }
 
-        buttonTable.add().grow().row()  // For aligning button to the top
+        btnTable.add().grow().row()  // For aligning button to the top
     }
 
     override fun setStage(stage: Stage?) {

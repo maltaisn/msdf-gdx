@@ -73,7 +73,7 @@ open class MsdfButton(skin: Skin, text: CharSequence? = null) : Table(skin) {
         touchable = Touchable.enabled
         titleLabel.touchable = Touchable.disabled
 
-        add(titleLabel).grow().pad(3f, 20f, 3f, 20f)
+        add(titleLabel).grow().pad(8f, 20f, 8f, 20f)
 
         addListener(object : InputListener() {
             override fun enter(event: InputEvent, x: Float, y: Float, pointer: Int, fromActor: Actor?) {
