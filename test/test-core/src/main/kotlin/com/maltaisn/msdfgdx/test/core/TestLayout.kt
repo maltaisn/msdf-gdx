@@ -24,6 +24,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable
 import com.maltaisn.msdfgdx.FontStyle
 import com.maltaisn.msdfgdx.widget.MsdfLabel
+import ktx.actors.alpha
 import ktx.style.get
 import java.text.NumberFormat
 
@@ -33,7 +34,7 @@ class TestLayout(skin: Skin) : Table(skin) {
     private val style: TestLayoutStyle = skin.get()
 
     private val fontStyle = FontStyle().apply {
-        fontName = FONT_NAMES.first()
+        fontName = FONT_NAMES[2]
         color = FONT_COLORS.first().cpy()
         weight = FontStyle.WEIGHT_REGULAR
         shadowColor.set(1f, 1f, 1f, 0f)
@@ -110,12 +111,16 @@ class TestLayout(skin: Skin) : Table(skin) {
                     label.isDisabled = disabled
                 }
             }
+            addValueBtn("Batch alpha", 0f, 1f, 1f, -0.1f,
+                    NumberFormat.getPercentInstance()) { _, alpha, _ ->
+                textTable.alpha = alpha
+            }
             addEnumBtn("Change text", TEXTS, null) { _, text ->
                 for (label in labels) {
                     label.txt = text
                 }
             }
-            addEnumBtn("Font", FONT_NAMES, FONT_NAMES) { _, fontName ->
+            addEnumBtn("Font", FONT_NAMES, initialIndex = 2) { _, fontName ->
                 fontStyle.fontName = fontName
                 updateFontStyle()
             }

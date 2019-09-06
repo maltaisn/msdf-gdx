@@ -16,6 +16,7 @@
 
 package com.maltaisn.msdfgdx.widget;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -133,7 +134,7 @@ public class MsdfLabel extends Label implements Disableable {
         this.fontStyle = fontStyle;
         this.font = skin.get(fontStyle.getFontName(), MsdfFont.class);
         setFontScale(fontStyle.getSize() / font.getGlyphSize());
-        super.setStyle(new LabelStyle(font.getFont(), fontStyle.getColor()));
+        super.setStyle(new LabelStyle(font.getFont(), Color.WHITE));
         setTxt(txt);
     }
 

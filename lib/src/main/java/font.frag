@@ -8,6 +8,7 @@ varying vec2 v_texCoord;
 
 uniform float distanceRange;
 
+uniform vec4 color;
 uniform float fontWeight;
 
 uniform vec4 shadowColor;
@@ -41,7 +42,7 @@ void main() {
     float distance = median(msdf.r, msdf.g, msdf.b) + fontWeight - 0.5;
     distance *= dot(distanceRange / texSize, 0.5 / fwidth(v_texCoord));
     float glyphAlpha = clamp(distance + 0.5, 0.0, 1.0);
-    vec4 glyph = vec4(v_color.rgb, glyphAlpha);
+    vec4 glyph = vec4(color.rgb, glyphAlpha * color.a);
 
     // Shadow
     distance = texture(u_texture, v_texCoord - shadowOffset / texSize).a + fontWeight;

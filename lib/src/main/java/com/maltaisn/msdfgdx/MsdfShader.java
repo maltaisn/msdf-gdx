@@ -49,6 +49,7 @@ public class MsdfShader extends ShaderProgram {
     public void updateForFont(MsdfFont font, FontStyle style) {
         setUniformf("distanceRange", font.getDistanceRange());
 
+        setUniformf("color", style.getColor());
         setUniformf("fontWeight", style.getWeight());
 
         setUniformf("shadowColor", style.getShadowColor());

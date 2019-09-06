@@ -42,7 +42,8 @@ class TestApp : ApplicationListener {
         Gdx.input.inputProcessor = stage
 
         // Load skin
-        val skin = assetManager.loadOnDemand<Skin>(TestRes.SKIN, SkinLoader.SkinParameter(TestRes.ATLAS)).asset
+        val skin = assetManager.loadOnDemand<Skin>(TestRes.SKIN,
+                SkinLoader.SkinParameter(TestRes.ATLAS)).asset
 
         // Create shader and add it to the skin.
         skin.add("default", MsdfShader())
