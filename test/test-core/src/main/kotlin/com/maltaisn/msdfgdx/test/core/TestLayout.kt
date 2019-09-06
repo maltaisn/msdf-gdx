@@ -151,6 +151,10 @@ class TestLayout(skin: Skin) : Table(skin) {
                 fontStyle.shadowColor.a = if (shadowDrawn) shadowOpacityBtn.value else 0f
                 updateFontStyle()
             }
+            addToggleBtn("Clip shadow") { _, clip ->
+                fontStyle.isShadowClipped = clip
+                updateFontStyle()
+            }
             addEnumBtn("Shadow color", SHADOW_COLORS, SHADOW_COLOR_NAMES) { _, color ->
                 val shadowColor = color.cpy()
                 shadowColor.a = fontStyle.shadowColor.a

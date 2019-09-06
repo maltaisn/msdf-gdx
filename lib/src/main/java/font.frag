@@ -11,6 +11,7 @@ uniform float distanceRange;
 uniform vec4 color;
 uniform float fontWeight;
 
+uniform float shadowClipped;
 uniform vec4 shadowColor;
 uniform vec2 shadowOffset;
 uniform float shadowSmoothing;
@@ -47,6 +48,7 @@ void main() {
     // Shadow
     distance = texture(u_texture, v_texCoord - shadowOffset / texSize).a + fontWeight;
     float shadowAlpha = linearstep(0.5 - shadowSmoothing, 0.5 + shadowSmoothing, distance) * shadowColor.a;
+    shadowAlpha *= 1.0 - glyphAlpha * shadowClipped;
     vec4 shadow = vec4(shadowColor.rgb, shadowAlpha);
 
     // Inner shadow

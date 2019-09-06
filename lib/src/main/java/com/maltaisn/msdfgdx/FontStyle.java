@@ -61,6 +61,12 @@ public final class FontStyle {
     private boolean allCaps = false;
 
     /**
+     * Whether to clip shadow under the glyph. When the glyph is
+     * drawn in a translucent color, shadow will appear behind it if not clipped.
+     */
+    private boolean shadowClipped = false;
+
+    /**
      * The color of the outer shadow, can be translucent.
      * Use transparent for no shadow.
      */
@@ -110,8 +116,9 @@ public final class FontStyle {
         weight = style.weight;
         color = style.color.cpy();
         allCaps = style.allCaps;
-        shadowOffset = style.shadowOffset.cpy();
+        shadowClipped = style.shadowClipped;
         shadowColor = style.shadowColor.cpy();
+        shadowOffset = style.shadowOffset.cpy();
         shadowSmoothing = style.shadowSmoothing;
         innerShadowColor = style.innerShadowColor.cpy();
         innerShadowRange = style.innerShadowRange;
@@ -168,6 +175,15 @@ public final class FontStyle {
 
     public FontStyle setAllCaps(boolean allCaps) {
         this.allCaps = allCaps;
+        return this;
+    }
+
+    public boolean isShadowClipped() {
+        return shadowClipped;
+    }
+
+    public FontStyle setShadowClipped(boolean shadowClipped) {
+        this.shadowClipped = shadowClipped;
         return this;
     }
 
@@ -241,6 +257,8 @@ public final class FontStyle {
         str.append(", allCaps=");
         str.append(allCaps);
         if (shadowColor.a != 0) {
+            str.append(", clipShadow=");
+            str.append(shadowClipped);
             str.append(", shadowColor=");
             str.append(shadowColor);
             str.append(", shadowOffset=");
