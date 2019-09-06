@@ -105,6 +105,11 @@ class TestLayout(skin: Skin) : Table(skin) {
             lateinit var shadowOpacityBtn: ButtonTable.ValueMsdfBtn
             lateinit var inShadowOpacityBtn: ButtonTable.ValueMsdfBtn
 
+            addToggleBtn("Disabled") { _, disabled ->
+                for (label in labels) {
+                    label.isDisabled = disabled
+                }
+            }
             addEnumBtn("Change text", TEXTS, null) { _, text ->
                 for (label in labels) {
                     label.txt = text

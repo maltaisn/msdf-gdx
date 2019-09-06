@@ -44,8 +44,10 @@ class ButtonTable(skin: Skin) : Table(skin) {
         return btn
     }
 
-    fun addToggleBtn(title: String, action: (MsdfButton, checked: Boolean) -> Unit): MsdfButton {
+    fun addToggleBtn(title: String, checked: Boolean = false,
+                     action: (MsdfButton, checked: Boolean) -> Unit): MsdfButton {
         val btn = addBtn(title) { action(it, it.checked) }
+        btn.checked = checked
         btn.checkable = true
         return btn
     }
