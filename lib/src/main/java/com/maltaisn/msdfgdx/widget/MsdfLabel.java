@@ -142,6 +142,10 @@ public class MsdfLabel extends Label implements Disableable {
         return fontStyle;
     }
 
+    public MsdfFont getFont() {
+        return font;
+    }
+
     /**
      * @deprecated Use {@link #setFillParent(boolean)}
      */
