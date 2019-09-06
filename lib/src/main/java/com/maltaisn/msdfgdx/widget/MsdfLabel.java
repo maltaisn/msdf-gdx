@@ -78,7 +78,7 @@ public class MsdfLabel extends Label implements Disableable {
         this.skin = skin;
         this.shader = skin.get(MsdfShader.class);
 
-        txt.append(text);
+        txt.append(text == null ? "" : text);
         setFontStyle(fontStyle);
     }
 
@@ -93,12 +93,15 @@ public class MsdfLabel extends Label implements Disableable {
     }
 
     public void setTxt(@Nullable CharSequence newText) {
+        if (newText == null) {
+            newText = "";
+        }
         if (newText != txt) {
             txt.setLength(0);
             txt.append(newText);
         }
 
-        if (fontStyle.isAllCaps() && newText != null) {
+        if (fontStyle.isAllCaps()) {
             // Not very memory-efficient...
             newText = newText.toString().toUpperCase();
         }
