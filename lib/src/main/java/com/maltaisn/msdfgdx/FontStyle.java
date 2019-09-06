@@ -18,6 +18,7 @@ package com.maltaisn.msdfgdx;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
+import com.maltaisn.msdfgdx.widget.MsdfLabel;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -30,7 +31,8 @@ public final class FontStyle {
 
 
     /**
-     * The font face for this font style. Must not be null.
+     * The font name for this font style. Must not be null.
+     * Used by {@link MsdfLabel} to get a {@link MsdfFont} from a skin by name.
      */
     @NotNull
     private String fontName = "default";
@@ -57,6 +59,7 @@ public final class FontStyle {
 
     /**
      * Whether only capital letters should be displayed or not.
+     * Only used by {@link MsdfLabel}, has no effect when drawing with batch directly.
      */
     private boolean allCaps = false;
 
