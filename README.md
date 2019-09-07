@@ -12,15 +12,14 @@ sharp corners at any size and SDF is used for shadow effects to keep round corne
 The library can also render normal MSDF and SDF but shadows won't work.
 
 #### Gradle dependency
-```groovy
-implementation("com.maltaisn:msdfgdx:0.1.0")
-```
+COMING SOON.
+
 The library is compatible with LibGDX 1.9.10 and up.
 
 ## Usage
 
 #### MsdfFont
-The shader needs `MsdfFont` object to work, which is a simple wrapper around BitmapFont.
+The shader needs a `MsdfFont` object to work, which is a simple wrapper around BitmapFont.
 The `MsdfFont` can be created from an existing BitmapFont or from a *.fnt* file. 
 You can also use the AssetManager to load one:
 ```java
@@ -36,7 +35,7 @@ MsdfFont font = manager.get("roboto.png");
 Skin skin = new Skin()
 skin.add("roboto", font);
 ```
-When creating a font, the glyph size in the atlas (the `-s` option) 
+When creating a font, the glyph size in the atlas (the `-s` option used when generating it) 
 and the distance range (the `-r` option) must be specified.
 
 #### FontStyle
@@ -119,7 +118,7 @@ Here's the steps to generate the files from a *font.ttf* font file.
 
 1. Generate the SDF font with the command below. You can change the glyph size `-s`, 
 the distance range `-r` (the range in px to encode the distance field) and the charset `-i` file.
-Here's a [great charset to use][charset] with complete coverage in over 30 languages ([latin-9][charset-wiki]).
+Here's a [great charset to use][charset] for complete coverage in over 30 languages ([latin-9][charset-wiki]).
     ```text
     msdf-bmfont -f xml -i charset.txt -s 32 -r 5 -t sdf --pot --smart-size %1
     ```
