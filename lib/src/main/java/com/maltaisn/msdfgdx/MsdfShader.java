@@ -18,6 +18,7 @@ package com.maltaisn.msdfgdx;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
@@ -47,6 +48,11 @@ public class MsdfShader extends ShaderProgram {
     }
 
     public void updateForFont(MsdfFont font, FontStyle style) {
+        // Texture size is available from the shader with textureSize(u_texture, 0), however it
+        // doesn't work with OpenGL ES 2.0 and there doesn't seem be any built-in alternative...
+        TextureRegion region = font.getFont().getRegion();
+        setUniformf("u_textureSize", region.getRegionWidth(), region.getRegionHeight());
+
         setUniformf("distanceRange", font.getDistanceRange());
 
         setUniformf("color", style.getColor());

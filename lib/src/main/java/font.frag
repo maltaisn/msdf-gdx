@@ -2,7 +2,16 @@
 precision mediump float;
 #endif
 
+#extension GL_OES_standard_derivatives : enable
+
+#if __VERSION__ >= 130
+#define TEXTURE texture
+#else
+#define TEXTURE texture2D
+#endif
+
 uniform sampler2D u_texture;
+uniform vec2 u_textureSize;
 varying vec4 v_color;
 varying vec2 v_texCoord;
 
@@ -26,8 +35,8 @@ float median(float r, float g, float b) {
 
 vec4 blend(vec4 src, vec4 dst, float alpha) {
     // src OVER dst porter-duff blending
-    float a = src.a + dst.a * (1 - src.a);
-    vec3 rgb = (src.a * src.rgb + dst.a * dst.rgb * (1 - src.a)) / a;
+    float a = src.a + dst.a * (1.0 - src.a);
+    vec3 rgb = (src.a * src.rgb + dst.a * dst.rgb * (1.0 - src.a)) / a;
     return vec4(rgb, a * alpha);
 }
 
@@ -36,17 +45,15 @@ float linearstep(float a, float b, float x) {
 }
 
 void main() {
-    vec2 texSize = vec2(textureSize(u_texture, 0));
-
     // Glyph
-    vec4 msdf = texture(u_texture, v_texCoord);
+    vec4 msdf = TEXTURE(u_texture, v_texCoord);
     float distance = median(msdf.r, msdf.g, msdf.b) + fontWeight - 0.5;
-    distance *= dot(distanceRange / texSize, 0.5 / fwidth(v_texCoord));
+    distance *= dot(distanceRange / u_textureSize, 0.5 / fwidth(v_texCoord));
     float glyphAlpha = clamp(distance + 0.5, 0.0, 1.0);
     vec4 glyph = vec4(color.rgb, glyphAlpha * color.a);
 
     // Shadow
-    distance = texture(u_texture, v_texCoord - shadowOffset / texSize).a + fontWeight;
+    distance = TEXTURE(u_texture, v_texCoord - shadowOffset / u_textureSize).a + fontWeight;
     float shadowAlpha = linearstep(0.5 - shadowSmoothing, 0.5 + shadowSmoothing, distance) * shadowColor.a;
     shadowAlpha *= 1.0 - glyphAlpha * shadowClipped;
     vec4 shadow = vec4(shadowColor.rgb, shadowAlpha);
