@@ -230,8 +230,8 @@ class TestLayout(skin: Skin) : Table(skin) {
 
         private val TEXTS = listOf("The quick brown fox jumps over the lazy dog",
                 "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
-                "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýÿŸþŽžŠš",
-                "!\"#\$%&'()*+,-./:;<=>?[\\]^_`{|}~¡¢£€¥§©ª«¬®¯°±²³µ¶·¹º»Œœ¿×")
+                "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýÿŸþŽžŠšµŒœ",
+                "!\"#\$%&'()*+,-./:;<=>?[\\]^_`{|}~¡¢£€¥§©ª«¬®¯°±²³¶·¹º»¿×")
 
         private val FONT_NAMES = listOf("roboto-16", "roboto-24", "roboto-32",
                 "roboto-40", "roboto-40-sdf", "roboto-bold-40")

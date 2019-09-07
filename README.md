@@ -4,6 +4,8 @@ text on LibGDX. See LibGDX's [Distance field fonts][sdf-libgdx] wiki page for mo
 single channel SDF font. It also provides integration with scene2d and AssetManager. 
 The library is written in Java but was also designed to be used seemlessly from Kotlin.
 
+![Demo](demo.gif)
+
 [MSDFA font][msdfa] files are used to draw text. This format combines both
 multi channel (MSDF) and single channel (SDF) distance fields. 
 The MSDF is encoded in 3 channels (RGB) and SDF is encoded in the alpha channel.
