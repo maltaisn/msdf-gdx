@@ -36,7 +36,7 @@ float median(float r, float g, float b) {
 vec4 blend(vec4 src, vec4 dst, float alpha) {
     // src OVER dst porter-duff blending
     float a = src.a + dst.a * (1.0 - src.a);
-    vec3 rgb = (src.a * src.rgb + dst.a * dst.rgb * (1.0 - src.a)) / a;
+    vec3 rgb = (src.a * src.rgb + dst.a * dst.rgb * (1.0 - src.a)) / (a == 0.0 ? 1.0 : a);
     return vec4(rgb, a * alpha);
 }
 
