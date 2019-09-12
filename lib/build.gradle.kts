@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     `maven-publish`
+    signing
 }
 
 dependencies {
@@ -20,6 +21,7 @@ java {
 
     sourceSets {
         main {
+            // This is needed to keep shader files in classpath.
             resources.srcDir("src/main/java")
         }
     }
@@ -40,17 +42,20 @@ tasks.register<Jar>("javadocJar") {
 publishing {
     publications {
         create<MavenPublication>("maven") {
+            val libVersion: String by project
             groupId = "com.maltaisn"
-            artifactId = "msdfgdx"
-            version = rootProject.extra["libVersion"] as String
+            artifactId = "msdf-gdx"
+            version = libVersion
+
             pom {
-                name.set("Card game")
-                description.set("Card game base application")
+                name.set("msdf-gdx")
+                description.set("Provides lightweight utilities to draw MSDF text on LibGDX.")
                 url.set("https://github.com/maltaisn/msdf-gdx")
                 licenses {
                     license {
                         name.set("The Apache License, Version 2.0")
                         url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        distribution.set("repo")
                     }
                 }
                 developers {
@@ -58,10 +63,31 @@ publishing {
                         id.set("maltaisn")
                     }
                 }
+                scm {
+                    url.set("https://github.com/maltaisn/msdf-gdx")
+                    connection.set("scm:git:git://github.com/maltaisn/msdf-gdx.git")
+                    developerConnection.set("scm:git:ssh://git@github.com:maltaisn/msdf-gdx.git")
+                }
             }
+
             from(components["java"])
             artifact(tasks["sourcesJar"])
-            //artifact(tasks["javadocJar"])
+            artifact(tasks["javadocJar"])
         }
     }
+    repositories {
+        val ossrhUsername: String by project
+        val ossrhPassword: String by project
+        maven {
+            url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+            credentials {
+                this.username = ossrhUsername
+                this.password = ossrhPassword
+            }
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications["maven"])
 }

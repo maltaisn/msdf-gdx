@@ -14,9 +14,10 @@ sharp corners at any size and SDF is used for shadow effects to keep round corne
 The library can also render normal MSDF and SDF but shadows won't work.
 
 #### Gradle dependency
-COMING SOON.
-
-The library is compatible with LibGDX 1.9.10 and up.
+```
+implementation("com.maltaisn:msdf-gdx:X.Y.Z")
+```
+Replace `X.Y.Z` with the lastest version: ![Maven Central](https://img.shields.io/maven-central/v/com.maltaisn/msdf-gdx)
 
 ## Usage
 
@@ -159,6 +160,13 @@ The result should look like this:
 ![MSDFA Roboto font](test/assets/font/roboto-32.png)
 
 The library can also render normal MSDF and SDF but shadows won't work.
+
+## Changelog
+See [changelog](CHANGELOG.md).
+
+# License
+- Code is licensed under [Apache License, Version 2.0](LICENSE).
+- Test font (roboto) is licensed under Apache License, Version 2.0.
 
 ### References
 - [msdfgen][msdfgen] by Chlumsky who developed the MSDF technique.

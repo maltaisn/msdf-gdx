@@ -7,7 +7,8 @@ dependencies {
     val ktxVersion: String by project
     val junitVersion: String by project
 
-    api(project(":lib"))
+    //api(project(":lib"))
+    api("com.maltaisn:msdf-gdx:0.1.0")
 
     implementation(kotlin("stdlib"))
 
