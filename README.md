@@ -123,7 +123,7 @@ Here's the steps to generate the files from a *font.ttf* font file.
    the distance range `-r` (the range in px to encode the distance field) and the charset `-i` file.
    Here's a [great charset to use][charset] for complete coverage in over 30 languages ([latin-9][charset-wiki]).
    ```text
-   msdf-bmfont -f xml -i charset.txt -s 32 -r 5 -t sdf --pot --smart-size %1
+   msdf-bmfont -f xml -i charset.txt -s 32 -r 5 -t sdf --pot --smart-size font.ttf
    ```
    If you're planning on using the outer shadow effect, adding a few pixels of padding on the border
    and between glyph is a good idea. You can do this with the `-p` (padding) and `-b` (border) arguments.
@@ -133,7 +133,7 @@ Here's the steps to generate the files from a *font.ttf* font file.
 3. Generate the MSDF font just like the SDF font but changing the `-t` parameter.
    It is important to keep the same parameters used for the MSDF font since they will be merged afterwards.
    ```text
-   msdf-bmfont -f xml -i charset.txt -s 32 -r 5 -t msdf --pot --smart-size %1
+   msdf-bmfont -f xml -i charset.txt -s 32 -r 5 -t msdf --pot --smart-size font.ttf
    ```
    
 4. Run the python script to convert the generated *font.fnt* file to LibGDX's format.
