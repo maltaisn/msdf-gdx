@@ -13,7 +13,7 @@ uniform vec2 u_textureSize;
 varying vec4 v_color;
 varying vec2 v_texCoord;
 
-uniform float distanceRange;
+uniform float distanceFactor;
 
 uniform vec4 color;
 uniform float fontWeight;
@@ -45,8 +45,7 @@ float linearstep(float a, float b, float x) {
 void main() {
     // Glyph
     vec4 msdf = TEXTURE(u_texture, v_texCoord);
-    float distance = median(msdf.r, msdf.g, msdf.b) + fontWeight - 0.5;
-    distance *= dot(distanceRange / u_textureSize, 0.5);
+    float distance = distanceFactor * (median(msdf.r, msdf.g, msdf.b) + fontWeight - 0.5);
     float glyphAlpha = clamp(distance + 0.5, 0.0, 1.0);
     vec4 glyph = vec4(color.rgb, glyphAlpha * color.a);
 

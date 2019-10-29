@@ -53,7 +53,8 @@ public class MsdfShader extends ShaderProgram {
         TextureRegion region = font.getFont().getRegion();
         setUniformf("u_textureSize", region.getRegionWidth(), region.getRegionHeight());
 
-        setUniformf("distanceRange", font.getDistanceRange());
+        // https://github.com/Chlumsky/msdfgen/issues/36#issuecomment-429240110
+        setUniformf("distanceFactor", font.getDistanceRange() * style.getSize() / font.getGlyphSize());
 
         setUniformf("color", style.getColor());
         setUniformf("fontWeight", style.getWeight());
