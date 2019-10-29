@@ -1,3 +1,6 @@
+### v0.1.1
+- Removed need for GL_OES_standard_derivatives OpenGL extensions in fragment shader. Caused crashes on older OpenGL version/Open GL ES.
+
 ## v0.1.0
 - **Initial release**
 - Shader for drawing MSDF text.

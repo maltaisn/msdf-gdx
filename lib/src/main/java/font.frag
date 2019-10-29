@@ -2,8 +2,6 @@
 precision mediump float;
 #endif
 
-#extension GL_OES_standard_derivatives : enable
-
 #if __VERSION__ >= 130
 #define TEXTURE texture
 #else
@@ -48,7 +46,7 @@ void main() {
     // Glyph
     vec4 msdf = TEXTURE(u_texture, v_texCoord);
     float distance = median(msdf.r, msdf.g, msdf.b) + fontWeight - 0.5;
-    distance *= dot(distanceRange / u_textureSize, 0.5 / fwidth(v_texCoord));
+    distance *= dot(distanceRange / u_textureSize, 0.5);
     float glyphAlpha = clamp(distance + 0.5, 0.0, 1.0);
     vec4 glyph = vec4(color.rgb, glyphAlpha * color.a);
 
