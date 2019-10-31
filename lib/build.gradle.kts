@@ -42,10 +42,11 @@ tasks.register<Jar>("javadocJar") {
 publishing {
     publications {
         create<MavenPublication>("maven") {
+            val libGroup: String by project
             val libVersion: String by project
-            groupId = "com.maltaisn"
-            artifactId = "msdf-gdx"
+            groupId = libGroup
             version = libVersion
+            artifactId = "msdf-gdx"
 
             pom {
                 name.set("msdf-gdx")
@@ -76,9 +77,9 @@ publishing {
         }
     }
     repositories {
-        val ossrhUsername: String by project
-        val ossrhPassword: String by project
         maven {
+            val ossrhUsername: String by project
+            val ossrhPassword: String by project
             url = uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
             credentials {
                 this.username = ossrhUsername

@@ -17,7 +17,7 @@ The library can also render normal MSDF and SDF but shadows won't work.
 ```
 implementation("com.maltaisn:msdf-gdx:X.Y.Z")
 ```
-Replace `X.Y.Z` with the lastest version: ![Maven Central](https://img.shields.io/maven-central/v/com.maltaisn/msdf-gdx)
+Replace `X.Y.Z` with the lastest version: [![Maven Central](https://img.shields.io/maven-central/v/com.maltaisn/msdf-gdx)](https://search.maven.org/artifact/com.maltaisn/msdf-gdx)
 
 ## Usage
 
