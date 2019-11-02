@@ -1,19 +1,20 @@
+import java.util.*
+
 plugins {
     kotlin("jvm")
 }
 
-val assetsDir = file("../assets")
-val mainClassName = "com.maltaisn.msdfgdx.test.desktop.DesktopLauncher"
+val mainClassName = "com.maltaisn.msdfgdx.gen.MainKt"
 
 dependencies {
+    val junitVersion: String by project
     val gdxVersion: String by project
 
-    implementation(project(":test:test-core"))
-
     implementation(kotlin("stdlib"))
+    implementation("com.beust:jcommander:1.71")
+    implementation("com.badlogicgames.gdx:gdx-tools:$gdxVersion")
 
-    implementation("com.badlogicgames.gdx:gdx-backend-lwjgl3:$gdxVersion")
-    implementation("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-desktop")
+    testImplementation("junit:junit:$junitVersion")
 }
 
 java {
@@ -25,18 +26,22 @@ tasks.register<JavaExec>("run") {
     main = mainClassName
     classpath = sourceSets.main.get().runtimeClasspath
     standardInput = System.`in`
-    workingDir = assetsDir
     isIgnoreExitValue = true
+
+    val properties = Properties()
+    properties.load(project.rootProject.file("local.properties").inputStream())
+    setArgsString(properties.getProperty("gen-test-args"))
 
     if ("mac" in System.getProperty("os.name").toLowerCase()) {
         jvmArgs("-XstartOnFirstThread")
     }
 }
 
+// Use this task to create a fat jar.
+// The jar file is generated in test/test-desktop/build/libs
 tasks.register<Jar>("dist") {
     from(files(sourceSets.main.get().output.classesDirs))
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-    from(assetsDir)
 
     manifest {
         attributes["Main-Class"] = mainClassName
