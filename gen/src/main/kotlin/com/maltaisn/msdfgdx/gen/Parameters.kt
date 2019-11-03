@@ -26,10 +26,10 @@ class Parameters {
     @Parameter
     var params: List<String> = mutableListOf()
 
-    @Parameter(names = ["-g", "--msdfgen"], description = "Path of the msdfgen executable.", order = 0)
+    @Parameter(names = ["-g", "--msdfgen"], description = "Path of the msdfgen executable", order = 0)
     var msdfgen: String = "msdfgen.exe"
 
-    @Parameter(names = ["-o", "--output"], description = "Name and path of generated font textures", order = 1)
+    @Parameter(names = ["-o", "--output"], description = "Output path of generated font textures", order = 1)
     var output: String? = null
 
     @Parameter(names = ["-t", "--field-type"], description = "Field type: sdf | psdf | msdf", order = 2)
@@ -39,29 +39,36 @@ class Parameters {
     var alphaFieldType: String = "sdf"
 
     @Parameter(names = ["-s", "--font-size"], description = "Font size for generated textures", order = 4)
-    var fontSize: Float = 32f
+    var fontSize: Int = 32
 
     @Parameter(names = ["-r", "--distance-range"], description = "Distance range in which SDF is encoded.", order = 5)
-    var distanceRange: Float = 5f
+    var distanceRange: Int = 5
 
-    @Parameter(names = ["-m", "--texture-size"], arity = 2, description = "Width and height of generated textures", order = 6)
+    @Parameter(names = ["-d", "--texture-size"], arity = 2, description = "Width and height of generated atlas pages", order = 6)
     var textureSize: List<Int> = listOf(512, 512)
 
-    @Parameter(names = ["-p", "--glyph-padding"], description = "Padding between glyphs", order = 7)
-    var glyphPadding: Float = 2f
+    @Parameter(names = ["-p", "--glyph-padding"], description = "Additional glyph padding where SDF data can be encoded", order = 7)
+    var glyphPadding: Int = 1
 
-    @Parameter(names = ["-b", "--border-padding"], description = "Padding on the texture border", order = 8)
-    var borderPadding: Float = 2f
+    @Parameter(names = ["-m", "--glyph-margin"], description = "Margin between glyphs in the atlas", order = 8)
+    var glyphMargin: Int = 1
+
+    @Parameter(names = ["-b", "--border-padding"], description = "Margin on the texture border", order = 9)
+    var borderMargin: Int = 1
 
     @Parameter(names = ["-c", "--charset"], description = "File containing the characters to use (encoded as UTF-8). " +
-            "Can also one of: ascii, ascii-extended, latin-0, latin-9, windows-1252, extended.", order = 9)
+            "Can also one of: ascii, ascii-extended, latin-0, latin-9, windows-1252, extended.", order = 10)
     var charset: String = "ascii"
 
-    @Parameter(names = ["-h", "--help"], help = true, order = 10)
+    @Parameter(names = ["-h", "--help"], help = true, order = 11)
     var help = false
 
     /** List of characters from charset. */
     var charList = ""
+        private set
+
+    /** Output directory. */
+    var outputDir = System.getProperty("user.dir")
         private set
 
     /**
@@ -76,13 +83,27 @@ class Parameters {
             }
         }
 
+        // Create output directory
+        if (output != null) outputDir = output
+        val outputPath = File(outputDir)
+        outputPath.mkdirs()
+        if (!outputPath.exists()) paramError("Could not create output directory at '$outputDir'.")
+
+        // Check is msdfgen executable can be executed.
+        try {
+            Runtime.getRuntime().exec(msdfgen)
+        } catch (e: IOException) {
+            paramError("msdfgen executable '$msdfgen' doesn't exist or isn't executable.")
+        }
+
+        // Validate other arguments
         when {
             fieldType !in listOf("sdf", "psdf", "msdf") -> paramError("Invalid field type '$fieldType'")
             alphaFieldType !in listOf("none", "sdf", "psdf") -> paramError("Invalid field type '$alphaFieldType'")
             fontSize < 8 -> paramError("Font size must be at least 8.")
             distanceRange < 1 -> paramError("Distance range must be at least 1.")
             textureSize.any { d -> d !in VALID_TEXTURE_SIZES } -> paramError("Texture size must be power of two between 32 and 65536.")
-            glyphPadding < 0 || borderPadding < 0 -> paramError("Padding values must be at least 0.")
+            glyphPadding < 0 || glyphMargin < 0 || borderMargin < 0 -> paramError("Padding and margin values must be at least 0.")
         }
 
         // Get charset from file or builtin
@@ -101,13 +122,13 @@ class Parameters {
                 /* ASCII printable chars up to 127. */
                 "ascii" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
                 /* ASCII printable chars up to 255 minus box chars and some math. */
-                "ascii-extended" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤÷≈°∙·√ⁿ²■ ",
+                "ascii-extended" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|} ~ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤÷≈°∙·√ⁿ²■",
                 /* ISO/IEC 8859-1 aka latin-0. */
-                "latin-0" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£€¥Š§š©ª«¬\u00AD®¯°±²³Žµ¶·ž¹º»ŒœŸ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ",
+                "latin-0" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£€¥Š§š©ª«¬\u00AD®¯°±²³Žµ¶·ž¹º»ŒœŸ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ",
                 /* ISO/IEC 8859-15 aka latin-9. */
-                "latin-9" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬\u00AD®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ",
+                "latin-9" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬\u00AD®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ",
                 /* windows-1252 (superset of latin-0). */
-                "windows-1252" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬\u00AD®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿŒœŠšŸŽžƒˆ˜–—‘’‚“”„†‡•…‰‹›€™",
+                "windows-1252" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬\u00AD®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿŒœŠšŸŽžƒˆ˜–—‘’‚“”„†‡•…‰‹›€™",
                 /* Hiero's extended charset. */
                 "extended" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬\u00AD®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢ" +
                         "ģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſʹ͵ͺͻͼͽ;΄΅Ά·ΈΉΊΌΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώϐϑϒϓϔϕϖϗϘϙϚϛϜϝϞϟϠϡϢϣϤϥϦϧϨϩϪϫϬϭϮϯϰϱϲϳϴϵ϶ϷϸϹϺϻϼϽϾϿЀЁЂЃЄЅІЇЈЉЊЋЌЍЎЏАБВГДЕ" +
