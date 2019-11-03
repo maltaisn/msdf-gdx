@@ -47,9 +47,6 @@ class Parameters {
     @Parameter(names = ["-d", "--texture-size"], arity = 2, description = "Width and height of generated atlas pages", order = 6)
     var textureSize: List<Int> = listOf(512, 512)
 
-    @Parameter(names = ["-p", "--glyph-padding"], description = "Additional glyph padding where SDF data can be encoded", order = 7)
-    var glyphPadding: Int = 1
-
     @Parameter(names = ["-m", "--glyph-margin"], description = "Margin between glyphs in the atlas", order = 8)
     var glyphMargin: Int = 1
 
@@ -103,7 +100,7 @@ class Parameters {
             fontSize < 8 -> paramError("Font size must be at least 8.")
             distanceRange < 1 -> paramError("Distance range must be at least 1.")
             textureSize.any { d -> d !in VALID_TEXTURE_SIZES } -> paramError("Texture size must be power of two between 32 and 65536.")
-            glyphPadding < 0 || glyphMargin < 0 || borderMargin < 0 -> paramError("Padding and margin values must be at least 0.")
+            glyphMargin < 0 || borderMargin < 0 -> paramError("Padding and margin values must be at least 0.")
         }
 
         // Get charset from file or builtin

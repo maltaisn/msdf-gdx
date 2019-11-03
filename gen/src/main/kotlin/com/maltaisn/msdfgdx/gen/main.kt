@@ -74,7 +74,7 @@ fun main(args: Array<String>) {
         val bounds = glyph.visualBounds
 
         if (bounds.width > 0.0 && bounds.height > 0.0) {
-            val pad = params.glyphPadding
+            val pad = params.distanceRange / 2f
             val width = ceil(bounds.width + pad * 2).toInt().toString()
             val height = ceil(bounds.height + pad * 2).toInt().toString()
             val distRange = params.distanceRange.toString()
