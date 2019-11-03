@@ -18,6 +18,7 @@ package com.maltaisn.msdfgdx.gen
 
 import com.beust.jcommander.Parameter
 import java.io.File
+import java.io.IOException
 
 
 class Parameters {
@@ -40,7 +41,7 @@ class Parameters {
     @Parameter(names = ["-s", "--font-size"], description = "Font size for generated textures", order = 4)
     var fontSize: Float = 32f
 
-    @Parameter(names = ["-r", "--distance-range"], description = "Distance range in which SDF is encoded", order = 5)
+    @Parameter(names = ["-r", "--distance-range"], description = "Distance range in which SDF is encoded.", order = 5)
     var distanceRange: Float = 5f
 
     @Parameter(names = ["-m", "--texture-size"], arity = 2, description = "Width and height of generated textures", order = 6)
@@ -52,31 +53,67 @@ class Parameters {
     @Parameter(names = ["-b", "--border-padding"], description = "Padding on the texture border", order = 8)
     var borderPadding: Float = 2f
 
-    @Parameter(names = ["-c", "--charset"], description = "File containing the characters to use", order = 9)
-    var charset: String? = null
+    @Parameter(names = ["-c", "--charset"], description = "File containing the characters to use (encoded as UTF-8). " +
+            "Can also one of: ascii, ascii-extended, latin-0, latin-9, windows-1252, extended.", order = 9)
+    var charset: String = "ascii"
 
-    @Parameter(names = ["-h", "--help"], help = true, order = 9)
+    @Parameter(names = ["-h", "--help"], help = true, order = 10)
     var help = false
+
+    /** List of characters from charset. */
+    var charList = ""
+        private set
 
     /**
      * Validate arguments
      */
-    fun validate(): String? = when {
-        help -> null
-        params.isEmpty() -> "No input file."
-        params.any { !File(it).exists() } -> "Input file doesn't exist."
-        fieldType !in listOf("sdf", "psdf", "msdf") -> "Invalid field type: $fieldType"
-        alphaFieldType !in listOf("none", "sdf", "psdf") -> "Invalid field type: $alphaFieldType"
-        fontSize < 8 -> "Font size must be at least 8."
-        distanceRange < 1 -> "Distance range must be at least 1."
-        textureSize.any { d -> d !in VALID_TEXTURE_SIZES } -> "Texture size must be power of two between 32 and 65536."
-        glyphPadding < 0 || borderPadding < 0 -> "Padding values must be at least 0."
-        charset != null && !File(charset!!).exists() -> "Charset file doesn't exist."
-        else -> null
+    fun validate() {
+        // Validate input files
+        if (params.isEmpty()) paramError("No input file.")
+        for (inputFile in params) {
+            if (!File(inputFile).exists()) {
+                paramError("Input file '$inputFile' doesn't exist.")
+            }
+        }
+
+        when {
+            fieldType !in listOf("sdf", "psdf", "msdf") -> paramError("Invalid field type '$fieldType'")
+            alphaFieldType !in listOf("none", "sdf", "psdf") -> paramError("Invalid field type '$alphaFieldType'")
+            fontSize < 8 -> paramError("Font size must be at least 8.")
+            distanceRange < 1 -> paramError("Distance range must be at least 1.")
+            textureSize.any { d -> d !in VALID_TEXTURE_SIZES } -> paramError("Texture size must be power of two between 32 and 65536.")
+            glyphPadding < 0 || borderPadding < 0 -> paramError("Padding values must be at least 0.")
+        }
+
+        // Get charset from file or builtin
+        // Also remove duplicate characters and sort them.
+        charList = BUILTIN_CHARSETS[charset] ?: try {
+            File(charset).readText()
+        } catch (e: IOException) {
+            paramError("Could not read charset file.")
+        }.toSortedSet().joinToString("")
     }
 
     companion object {
         private val VALID_TEXTURE_SIZES = List(12) { 1 shl (it + 5) }
+
+        private val BUILTIN_CHARSETS = mapOf(
+                /* ASCII printable chars up to 127. */
+                "ascii" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
+                /* ASCII printable chars up to 255 minus box chars and some math. */
+                "ascii-extended" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤÷≈°∙·√ⁿ²■ ",
+                /* ISO/IEC 8859-1 aka latin-0. */
+                "latin-0" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£€¥Š§š©ª«¬\u00AD®¯°±²³Žµ¶·ž¹º»ŒœŸ¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ",
+                /* ISO/IEC 8859-15 aka latin-9. */
+                "latin-9" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬\u00AD®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ",
+                /* windows-1252 (superset of latin-0). */
+                "windows-1252" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬\u00AD®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿŒœŠšŸŽžƒˆ˜–—‘’‚“”„†‡•…‰‹›€™",
+                /* Hiero's extended charset. */
+                "extended" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~ ¡¢£¤¥¦§¨©ª«¬\u00AD®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢ" +
+                        "ģĤĥĦħĨĩĪīĬĭĮįİıĲĳĴĵĶķĸĹĺĻļĽľĿŀŁłŃńŅņŇňŉŊŋŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŦŧŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽžſʹ͵ͺͻͼͽ;΄΅Ά·ΈΉΊΌΎΏΐΑΒΓΔΕΖΗΘΙΚΛΜΝΞΟΠΡΣΤΥΦΧΨΩΪΫάέήίΰαβγδεζηθικλμνξοπρςστυφχψωϊϋόύώϐϑϒϓϔϕϖϗϘϙϚϛϜϝϞϟϠϡϢϣϤϥϦϧϨϩϪϫϬϭϮϯϰϱϲϳϴϵ϶ϷϸϹϺϻϼϽϾϿЀЁЂЃЄЅІЇЈЉЊЋЌЍЎЏАБВГДЕ" +
+                        "ЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыьэюяѐёђѓєѕіїјљњћќѝўџѠѡѢѣѤѥѦѧѨѩѪѫѬѭѮѯѰѱѲѳѴѵѶѷѸѹѺѻѼѽѾѿҀҁ҂҃҄҅҆҇҈҉ҊҋҌҍҎҏҐґҒғҔҕҖҗҘҙҚқҜҝҞҟҠҡҢңҤҥҦҧҨҩҪҫҬҭҮүҰұҲҳҴҵҶҷҸҹҺһҼҽҾҿӀӁӂӃӄӅӆӇӈӉӊӋӌӍӎӏӐӑӒӓӔӕӖӗӘәӚӛӜӝӞӟӠӡӢӣӤӥӦӧӨөӪӫӬӭӮӯӰӱӲӳӴӵӶӷӸӹӺӻӼӽӾӿԀԁԂԃԄԅԆԇԈԉԊԋԌ" +
+                        "ԍԎԏԐԑԒԓԔԕԖԗԘԙԚԛԜԝԞԟԠԡԢԣԤԥԦԧ           \u200B\u200C\u200D\u200E\u200F‒–—―‖‗‘’‚‛“”„‟†‡•…\u202A\u202B\u202C\u202D\u202E ‰′″‴‹›‼‾⁄⁞\u206A\u206B\u206C\u206D\u206E\u206F₠₡₢₣₤₥₦₧₨₩₫€₭₮₯₰₱₲₳₴₵₹₺ⱠⱡⱢⱣⱤⱥⱦⱧⱨⱩⱪⱫⱬⱭⱱⱲⱳⱴⱵⱶⱷ"
+        )
     }
 
 }

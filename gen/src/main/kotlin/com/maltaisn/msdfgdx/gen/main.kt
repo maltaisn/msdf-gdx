@@ -24,7 +24,14 @@ import java.io.File
 fun main(args: Array<String>) {
     val params = Parameters()
     val commander = JCommander.newBuilder().addObject(params).build()
-    commander.parse(*args)
+
+    // Parse arguments
+    try {
+        commander.parse(*args)
+    } catch (e: com.beust.jcommander.ParameterException) {
+        println("ERROR: ${e.message}")
+        return
+    }
 
     if (params.help) {
         // Show help message
@@ -32,13 +39,15 @@ fun main(args: Array<String>) {
         return
     }
 
-    val message = params.validate()
-    if (message != null) {
-        // Invalid argument, show message
-        println("ERROR: $message")
-    } else if (!params.help) {
-        // Generate font files
-        val font = Font.createFont(Font.TRUETYPE_FONT, File(params.params[0])).deriveFont(params.fontSize)
-        TODO()
+    // Validate arguments
+    try {
+        params.validate()
+    } catch (e: ParameterException) {
+        println("ERROR: ${e.message}")
+        return
     }
+
+    // Generate font files
+    val font = Font.createFont(Font.TRUETYPE_FONT, File(params.params[0])).deriveFont(params.fontSize)
+    TODO()
 }
