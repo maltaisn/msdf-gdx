@@ -116,6 +116,7 @@ class Parameters {
         private val VALID_TEXTURE_SIZES = List(12) { 1 shl (it + 5) }
 
         private val BUILTIN_CHARSETS = mapOf(
+                "test" to " A@jp&ÂO!-$",
                 /* ASCII printable chars up to 127. */
                 "ascii" to " !\"#\$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~",
                 /* ASCII printable chars up to 255 minus box chars and some math. */
