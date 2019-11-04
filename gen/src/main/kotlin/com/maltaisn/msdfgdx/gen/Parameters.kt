@@ -44,7 +44,7 @@ class Parameters {
     @Parameter(names = ["-r", "--distance-range"], description = "Distance range in which SDF is encoded.", order = 5)
     var distanceRange: Int = 5
 
-    @Parameter(names = ["-d", "--texture-size"], arity = 2, description = "Width and height of generated atlas pages", order = 6)
+    @Parameter(names = ["-d", "--texture-size"], arity = 2, description = "Maximum width and height of generated atlas pages", order = 6)
     var textureSize: List<Int> = listOf(512, 512)
 
     @Parameter(names = ["-m", "--glyph-margin"], description = "Margin between glyphs in the atlas", order = 8)

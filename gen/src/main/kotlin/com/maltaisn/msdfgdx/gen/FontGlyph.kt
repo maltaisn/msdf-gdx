@@ -39,7 +39,7 @@ class FontGlyph(val char: Char) {
     var channels: Int = CHANNELS_NONE
 
     /** Map of kerning distances in pixels between this character (first) and other characters (second). */
-    val kernings = mutableMapOf<Char, Float>()
+    val kernings = mutableMapOf<Char, Int>()
 
 
     companion object {

@@ -16,6 +16,7 @@
 
 package com.maltaisn.msdfgdx.gen
 
+import com.badlogic.gdx.tools.hiero.Kerning
 import com.beust.jcommander.JCommander
 import java.awt.Font
 import java.awt.FontFormatException
@@ -55,8 +56,9 @@ fun main(args: Array<String>) {
     }
 
     // Load font file
+    val fontFile = File(params.params[0])
     val font = try {
-        Font.createFont(Font.TRUETYPE_FONT, File(params.params[0])).deriveFont(params.fontSize.toFloat())
+        Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(params.fontSize.toFloat())
     } catch (e: FontFormatException) {
         println("ERROR: Could not load font file: ${e.message}")
         return
@@ -69,10 +71,17 @@ fun main(args: Array<String>) {
 
     // Create font glyph objects
     val pad = params.distanceRange / 2f
-    val glyphs = mutableListOf<FontGlyph>()
+    val glyphs = mutableMapOf<Char, FontGlyph>()
+    val kernings = Kerning().apply { load(fontFile.inputStream(), params.fontSize) }.kernings
     for ((i, char) in params.charList.withIndex()) {
         val glyph = FontGlyph(char)
-        glyphs += glyph
+        glyphs[char] = glyph
+
+        // Set kerning distances
+        for (other in params.charList) {
+            val pair = (char.toInt() shl 16) or other.toInt()
+            glyph.kernings[other] = kernings[pair, 0]
+        }
 
         // Create glyph vector and get its bounding box.
         val glyphVector = font.createGlyphVector(fontRenderContext, char.toString())
