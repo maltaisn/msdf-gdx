@@ -19,13 +19,13 @@ package com.maltaisn.msdfgdx.gen
 import com.beust.jcommander.JCommander
 import java.awt.Font
 import java.awt.FontFormatException
-import java.awt.GraphicsEnvironment
+import java.awt.font.FontRenderContext
 import java.awt.geom.AffineTransform
 import java.awt.geom.GeneralPath
-import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 import kotlin.math.ceil
+import kotlin.math.roundToInt
 
 
 fun main(args: Array<String>) {
@@ -54,11 +54,6 @@ fun main(args: Array<String>) {
         return
     }
 
-    // Initialize graphics and environment
-    System.setProperty("java.awt.headless", "true")  // Not sure if necessary
-    val graphicsEnv = GraphicsEnvironment.getLocalGraphicsEnvironment()
-    val fontGraphics = graphicsEnv.createGraphics(BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB))
-
     // Load font file
     val font = try {
         Font.createFont(Font.TRUETYPE_FONT, File(params.params[0])).deriveFont(params.fontSize.toFloat())
@@ -66,6 +61,7 @@ fun main(args: Array<String>) {
         println("ERROR: Could not load font file: ${e.message}")
         return
     }
+    val fontRenderContext = FontRenderContext(AffineTransform(), true, true)
 
     // Create temp directory for outputting glyph images
     val tempDir = File(params.outputDir, "glyphs")
@@ -73,76 +69,48 @@ fun main(args: Array<String>) {
 
     // Create font glyph objects
     val pad = params.distanceRange / 2f
-    val distRangeStr = params.distanceRange.toString()
-
     val glyphs = mutableListOf<FontGlyph>()
     for ((i, char) in params.charList.withIndex()) {
         val glyph = FontGlyph(char)
         glyphs += glyph
 
         // Create glyph vector and get its bounding box.
-        val glyphVector = font.createGlyphVector(fontGraphics.fontRenderContext, char.toString())
+        val glyphVector = font.createGlyphVector(fontRenderContext, char.toString())
         val bounds = glyphVector.visualBounds
 
         if (bounds.width > 0.0 && bounds.height > 0.0) {
-            val file = tempDir.resolve("${char.toInt()}.png")
-            glyph.file = file
             glyph.width = ceil(bounds.width + pad * 2).toFloat()
             glyph.height = ceil(bounds.height + pad * 2).toFloat()
-            glyph.channels = FontGlyph.CHANNELS_RGB
 
-            val widthStr = glyph.width.toInt().toString()
-            val heightStr = glyph.height.toInt().toString()
+            val w = glyph.width.roundToInt()
+            val h = glyph.height.roundToInt()
 
             // Get glyph path and translate it to center it.
             val path = glyphVector.outline as GeneralPath
             path.transform(AffineTransform.getTranslateInstance(
                     -bounds.x + pad, -bounds.y - bounds.height - pad))
-            val shapeDescr = Shape.fromPath(path).toString()
 
-            // Base command
-            val command = listOf(
-                    params.msdfgen,
-                    "-size", widthStr, heightStr,
-                    "-pxrange", distRangeStr,
-                    "-defineshape", shapeDescr)
-
-            // Generate glyph image.
-            ProcessBuilder().command(command +
-                    listOf(params.fieldType, "-o", file.absolutePath))
-                    .start().waitFor()
+            // Generate main glyph image.
+            val gen = MsdfGen(params.msdfgen, w, h, params.distanceRange, Shape.fromPath(path).toString())
+            val glyphImage = gen.generateImage(params.fieldType)
+            glyph.image = glyphImage
+            glyph.channels = FontGlyph.CHANNELS_RGB
 
             if (params.alphaFieldType != "none") {
-                // Generate glyph image used for alpha layer
-                val alphaFile = tempDir.resolve("a${char.toInt()}.png")
-                ProcessBuilder().command(command +
-                        listOf(params.alphaFieldType, "-o", alphaFile.absolutePath))
-                        .start().waitFor()
-
-                // Merge two glyph textures
-                val rgbImage = ImageIO.read(file)
-                val alphaImage = ImageIO.read(alphaFile)
-                val w = rgbImage.width
-                val h = rgbImage.height
-
-                // Change RGB image color model to RGBA.
-                val mergedImage = BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB)
-                val graphics = mergedImage.createGraphics()
-                graphics.drawImage(rgbImage, 0, 0, null)
-                graphics.dispose()
-
-                // Keep RGB channel of RGB image and use red channel of alpha image as alpha channel.
-                val rgbPixels = rgbImage.getRGB(0, 0, w, h, null, 0, w)
+                // Generate glyph image used for alpha layer.
+                // Then keep RGB channel of glyph image and use red channel of alpha image as alpha channel.
+                val alphaImage = gen.generateImage(params.alphaFieldType)
+                val glyphPixels = glyphImage.getRGB(0, 0, w, h, null, 0, w)
                 val alphaPixels = alphaImage.getRGB(0, 0, w, h, null, 0, w)
-                for (j in rgbPixels.indices) {
-                    rgbPixels[j] = (rgbPixels[j] and 0x00FFFFFF) or (alphaPixels[j] and 0xFF shl 24)
+                for (j in glyphPixels.indices) {
+                    glyphPixels[j] = (glyphPixels[j] and 0x00FFFFFF) or (alphaPixels[j] and 0xFF shl 24)
                 }
-                mergedImage.setRGB(0, 0, w, h, rgbPixels, 0, w)
-                ImageIO.write(mergedImage, "png", file)
-                alphaFile.delete()
-
+                glyphImage.setRGB(0, 0, w, h, glyphPixels, 0, w)
                 glyph.channels = FontGlyph.CHANNELS_RGBA
             }
+
+            // Test output
+            ImageIO.write(glyphImage, "png", File(tempDir, "${char.toInt()}.png"))
 
             // Show progress
             println("${i + 1} / ${params.charList.length}")

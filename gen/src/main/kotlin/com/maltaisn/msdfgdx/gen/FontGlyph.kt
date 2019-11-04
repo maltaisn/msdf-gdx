@@ -16,13 +16,12 @@
 
 package com.maltaisn.msdfgdx.gen
 
-import java.io.File
+import java.awt.image.BufferedImage
 
 
 class FontGlyph(val char: Char) {
 
-    /** Glyph image file, or `null` if none. */
-    var file: File? = null
+    var image: BufferedImage? = null
 
     // Glyph position in atlas
     var page: Int = 0
