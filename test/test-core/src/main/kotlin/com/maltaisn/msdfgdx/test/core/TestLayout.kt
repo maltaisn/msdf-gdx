@@ -233,7 +233,7 @@ class TestLayout(skin: Skin) : Table(skin) {
                 "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýÿŸþŽžŠšµŒœ",
                 "!\"#\$%&'()*+,-./:;<=>?[\\]^_`{|}~¡¢£€¥§©ª«¬®¯°±²³¶·¹º»¿×")
 
-        private val FONT_NAMES = listOf("roboto-16", "roboto-24", "roboto-32",
+        private val FONT_NAMES = listOf("roboto-new", "roboto-16", "roboto-24", "roboto-32",
                 "roboto-40", "roboto-40-sdf", "roboto-bold-40")
 
         private val FONT_COLORS = listOf(Color.BLACK, Color.WHITE, Color.BLUE, Color.RED)

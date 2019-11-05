@@ -48,15 +48,16 @@ fun main(args: Array<String>) {
             val fontFile = File(fontPath)
             println("Generating distance field font for '${fontFile.name}'.")
 
-            val bmfont = BMFont(fontFile, params)
-            var lastStep: BMFont.GenerationStep? = null
+            val bmfont = BMFontGenerator(fontFile, params)
+            var lastStep: BMFontGenerator.GenerationStep? = null
             bmfont.generate { step, progress ->
+                print(if (step != lastStep) "\r" else "\n")
                 val stepName = when (step) {
-                    BMFont.GenerationStep.GLYPH -> "Generating glyph images"
-                    BMFont.GenerationStep.PACK -> "Packing glyphs into atlas"
-                    BMFont.GenerationStep.FONT_FILE -> "Generating BMFont file"
+                    BMFontGenerator.GenerationStep.GLYPH -> "Generating glyph images"
+                    BMFontGenerator.GenerationStep.PACK -> "Packing glyphs into atlas"
+                    BMFontGenerator.GenerationStep.FONT_FILE -> "Generating BMFont file"
                 }
-                println("$stepName [${"#".repeat((progress * 40).toInt())}" +
+                print("$stepName [${"#".repeat((progress * 40).toInt())}" +
                         "${"-".repeat((40 - progress * 40).toInt())}]" +
                         " ${floor(progress * 100).toInt()}%")
                 lastStep = step

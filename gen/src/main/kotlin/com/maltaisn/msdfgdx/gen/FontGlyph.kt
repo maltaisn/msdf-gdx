@@ -19,7 +19,7 @@ package com.maltaisn.msdfgdx.gen
 import java.awt.image.BufferedImage
 
 
-class FontGlyph(val char: Char) {
+class FontGlyph {
 
     var image: BufferedImage? = null
 
