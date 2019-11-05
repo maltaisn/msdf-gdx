@@ -22,4 +22,4 @@ package com.maltaisn.msdfgdx.gen
  */
 class ParameterException(message: String) : IllegalArgumentException(message)
 
-fun paramError(message: Any): Nothing = throw ParameterException(message.toString())
+fun paramError(message: Any?): Nothing = throw ParameterException(message.toString())

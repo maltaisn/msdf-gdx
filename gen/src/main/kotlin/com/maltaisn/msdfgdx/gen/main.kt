@@ -16,117 +16,58 @@
 
 package com.maltaisn.msdfgdx.gen
 
-import com.badlogic.gdx.tools.hiero.Kerning
 import com.beust.jcommander.JCommander
-import java.awt.Font
-import java.awt.FontFormatException
-import java.awt.font.FontRenderContext
-import java.awt.geom.AffineTransform
-import java.awt.geom.GeneralPath
 import java.io.File
-import javax.imageio.ImageIO
-import kotlin.math.ceil
-import kotlin.math.roundToInt
+import kotlin.math.floor
+import kotlin.system.exitProcess
 
 
 fun main(args: Array<String>) {
     val params = Parameters()
     val commander = JCommander.newBuilder().addObject(params).build()
 
-    // Parse arguments
     try {
-        commander.parse(*args)
-    } catch (e: com.beust.jcommander.ParameterException) {
-        println("ERROR: ${e.message}")
-        return
-    }
-
-    if (params.help) {
-        // Show help message
-        commander.usage()
-        return
-    }
-
-    // Validate arguments
-    try {
-        params.validate()
-    } catch (e: ParameterException) {
-        println("ERROR: ${e.message}")
-        return
-    }
-
-    // Load font file
-    val fontFile = File(params.params[0])
-    val font = try {
-        Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(params.fontSize.toFloat())
-    } catch (e: FontFormatException) {
-        println("ERROR: Could not load font file: ${e.message}")
-        return
-    }
-    val fontRenderContext = FontRenderContext(AffineTransform(), true, true)
-
-    // Create temp directory for outputting glyph images
-    val tempDir = File(params.outputDir, "glyphs")
-    tempDir.mkdirs()
-
-    // Create font glyph objects
-    val pad = params.distanceRange / 2f
-    val glyphs = mutableMapOf<Char, FontGlyph>()
-    val kernings = Kerning().apply { load(fontFile.inputStream(), params.fontSize) }.kernings
-    for ((i, char) in params.charList.withIndex()) {
-        val glyph = FontGlyph(char)
-        glyphs[char] = glyph
-
-        // Set kerning distances
-        for (other in params.charList) {
-            val pair = (char.toInt() shl 16) or other.toInt()
-            glyph.kernings[other] = kernings[pair, 0]
+        // Parse arguments
+        try {
+            commander.parse(*args)
+        } catch (e: com.beust.jcommander.ParameterException) {
+            paramError(e.message)
         }
 
-        // Create glyph vector and get its bounding box.
-        val glyphVector = font.createGlyphVector(fontRenderContext, char.toString())
-        val bounds = glyphVector.visualBounds
+        if (params.help) {
+            // Show help message
+            commander.usage()
+            exitProcess(1)
+        }
 
-        if (bounds.width > 0.0 && bounds.height > 0.0) {
-            glyph.width = ceil(bounds.width + pad * 2).toFloat()
-            glyph.height = ceil(bounds.height + pad * 2).toFloat()
+        // Validate arguments
+        params.validate()
 
-            val w = glyph.width.roundToInt()
-            val h = glyph.height.roundToInt()
+        // Generate BMFonts
+        for (fontPath in params.params) {
+            val fontFile = File(fontPath)
+            println("Generating distance field font for '${fontFile.name}'.")
 
-            // Get glyph path and translate it to center it.
-            val path = glyphVector.outline as GeneralPath
-            path.transform(AffineTransform.getTranslateInstance(
-                    -bounds.x + pad, -bounds.y - bounds.height - pad))
-
-            // Generate main glyph image.
-            val gen = MsdfGen(params.msdfgen, w, h, params.distanceRange, Shape.fromPath(path).toString())
-            val glyphImage = gen.generateImage(params.fieldType)
-            glyph.image = glyphImage
-            glyph.channels = FontGlyph.CHANNELS_RGB
-
-            if (params.alphaFieldType != "none") {
-                // Generate glyph image used for alpha layer.
-                // Then keep RGB channel of glyph image and use red channel of alpha image as alpha channel.
-                val alphaImage = gen.generateImage(params.alphaFieldType)
-                val glyphPixels = glyphImage.getRGB(0, 0, w, h, null, 0, w)
-                val alphaPixels = alphaImage.getRGB(0, 0, w, h, null, 0, w)
-                for (j in glyphPixels.indices) {
-                    glyphPixels[j] = (glyphPixels[j] and 0x00FFFFFF) or (alphaPixels[j] and 0xFF shl 24)
+            val bmfont = BMFont(fontFile, params)
+            var lastStep: BMFont.GenerationStep? = null
+            bmfont.generate { step, progress ->
+                val stepName = when (step) {
+                    BMFont.GenerationStep.GLYPH -> "Generating glyph images"
+                    BMFont.GenerationStep.PACK -> "Packing glyphs into atlas"
+                    BMFont.GenerationStep.FONT_FILE -> "Generating BMFont file"
                 }
-                glyphImage.setRGB(0, 0, w, h, glyphPixels, 0, w)
-                glyph.channels = FontGlyph.CHANNELS_RGBA
+                println("$stepName [${"#".repeat((progress * 40).toInt())}" +
+                        "${"-".repeat((40 - progress * 40).toInt())}]" +
+                        " ${floor(progress * 100).toInt()}%")
+                lastStep = step
             }
 
-            // Test output
-            ImageIO.write(glyphImage, "png", File(tempDir, "${char.toInt()}.png"))
-
-            // Show progress
-            println("${i + 1} / ${params.charList.length}")
-
-        } else {
-            // Blank character, no image to output.
-            println("Char '$char' (${char.toInt()}) is blank.")
+            println("DONE\n")
         }
+        exitProcess(0)
+
+    } catch (e: ParameterException) {
+        println("ERROR: ${e.message}")
+        exitProcess(1)
     }
 }

@@ -25,15 +25,15 @@ class FontGlyph(val char: Char) {
 
     // Glyph position in atlas
     var page: Int = 0
-    var x: Float = 0f
-    var y: Float = 0f
-    var width: Float = 0f
-    var height: Float = 0f
+    var x: Int = 0
+    var y: Int = 0
+    var width: Int = 0
+    var height: Int = 0
 
     // Glyph metrics
-    var xOffset: Float = 0f
-    var yOffset: Float = 0f
-    var xAdvance: Float = 0f
+    var xOffset: Int = 0
+    var yOffset: Int = 0
+    var xAdvance: Int = 0
 
     /** Bit field of texture channels where glyph is encoded. **/
     var channels: Int = CHANNELS_NONE
