@@ -17,10 +17,12 @@
 package com.maltaisn.msdfgdx.gen
 
 import com.beust.jcommander.Parameter
+import com.beust.jcommander.Parameters
 import java.io.File
 import java.io.IOException
 
 
+@Parameters(separators = " =")
 class Parameters {
 
     @Parameter
@@ -51,7 +53,7 @@ class Parameters {
     var padding: Int = 2
 
     @Parameter(names = ["-c", "--charset"], description = "File containing the characters to use (encoded as UTF-8). " +
-            "Can also one of: ascii, ascii-extended, latin-0, latin-9, windows-1252, extended.", order = 10)
+            "Can also be one of: ascii, ascii-extended, latin-0, latin-9, windows-1252, extended.", order = 10)
     var charset: String = "ascii"
 
     @Parameter(names = ["-h", "--help"], help = true, order = 11)
@@ -64,6 +66,10 @@ class Parameters {
     /** Output directory. */
     var outputDir = System.getProperty("user.dir")
         private set
+
+    /** Whether output bitmap font has glyphs encoded in alpha channel or not. */
+    val hasAlphaChannel: Boolean
+        get() = alphaFieldType != "none"
 
     /**
      * Validate arguments

@@ -18,6 +18,7 @@ package com.maltaisn.msdfgdx.gen
 
 import com.badlogic.gdx.Files
 import com.badlogic.gdx.backends.lwjgl.LwjglFileHandle
+import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.tools.hiero.Kerning
 import com.badlogic.gdx.tools.texturepacker.TexturePacker
@@ -115,7 +116,7 @@ class BMFontGenerator(private val fontFile: File,
                         glyph.image = glyphImage
                         glyph.channels = FontGlyph.CHANNELS_RGB
 
-                        if (params.alphaFieldType != "none") {
+                        if (params.hasAlphaChannel) {
                             // Generate glyph image used for alpha layer.
                             // Then keep RGB channel of glyph image and use red channel of alpha image as alpha channel.
                             val alphaImage = gen.generateImage(params.alphaFieldType)
@@ -135,6 +136,7 @@ class BMFontGenerator(private val fontFile: File,
                 }
             }
             jobs.awaitAll()
+            progressListener(GenerationStep.GLYPH, 1f)
         }
     }
 
@@ -151,6 +153,8 @@ class BMFontGenerator(private val fontFile: File,
             alias = false
             ignoreBlankImages = false
             silent = true
+
+            format = if (params.hasAlphaChannel) Pixmap.Format.RGBA8888 else Pixmap.Format.RGB888
         })
         val atlasFile = File(params.outputDir, fontFile.nameWithoutExtension + ".atlas")
 
@@ -227,7 +231,7 @@ class BMFontGenerator(private val fontFile: File,
 
         // Char tags
         bmfont.appendln("chars count=${glyphs.size}")
-        val channels = if (params.alphaFieldType == "none") FontGlyph.CHANNELS_RGB else FontGlyph.CHANNELS_RGBA
+        val channels = if (params.hasAlphaChannel) FontGlyph.CHANNELS_RGB else FontGlyph.CHANNELS_RGBA
         for ((char, glyph) in glyphs) {
             bmfont.appendln("char id=${char.toInt()} x=${glyph.x} y=${glyph.y} " +
                     "width=${glyph.width} height=${glyph.height} " +

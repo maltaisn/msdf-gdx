@@ -17,7 +17,9 @@
 package com.maltaisn.msdfgdx.gen
 
 import com.beust.jcommander.JCommander
+import com.maltaisn.msdfgdx.gen.BMFontGenerator.GenerationStep
 import java.io.File
+import java.text.DecimalFormat
 import kotlin.math.floor
 import kotlin.system.exitProcess
 
@@ -25,6 +27,7 @@ import kotlin.system.exitProcess
 fun main(args: Array<String>) {
     val params = Parameters()
     val commander = JCommander.newBuilder().addObject(params).build()
+    commander.programName = "msdfgen-bmfont"
 
     try {
         // Parse arguments
@@ -43,32 +46,53 @@ fun main(args: Array<String>) {
         // Validate arguments
         params.validate()
 
-        // Generate BMFonts
+        // Generate bitmap fonts
+        val numberFmt = DecimalFormat.getInstance()
+        numberFmt.minimumFractionDigits = 1
+        numberFmt.maximumFractionDigits = 1
+
         for (fontPath in params.params) {
+            val startTime = System.currentTimeMillis()
+            var stepStartTime = 0L
+
             val fontFile = File(fontPath)
+            val bmfont = BMFontGenerator(fontFile, params)
+
             println("Generating distance field font for '${fontFile.name}'.")
 
-            val bmfont = BMFontGenerator(fontFile, params)
-            var lastStep: BMFontGenerator.GenerationStep? = null
+            var lastPercentProgress = -1
             bmfont.generate { step, progress ->
-                print(if (step != lastStep) "\r" else "\n")
-                val stepName = when (step) {
-                    BMFontGenerator.GenerationStep.GLYPH -> "Generating glyph images"
-                    BMFontGenerator.GenerationStep.PACK -> "Packing glyphs into atlas"
-                    BMFontGenerator.GenerationStep.FONT_FILE -> "Generating BMFont file"
+                val percentProgress = floor(progress * 100).toInt()
+                if (percentProgress != lastPercentProgress) {
+                    if (percentProgress == 0) stepStartTime = System.currentTimeMillis()
+                    val stepDurationStr = numberFmt.format((System.currentTimeMillis() - stepStartTime) / 1000.0)
+
+                    val stepName = when (step) {
+                        GenerationStep.GLYPH -> "Generating glyph images"
+                        GenerationStep.PACK -> "Packing glyphs into atlas"
+                        GenerationStep.FONT_FILE -> "Generating BMFont file"
+                    }.padEnd(30, ' ')
+
+                    // Print step name, show progress bar and percent progress.
+                    print("\r$stepName[${"#".repeat((progress * 40).toInt())}" +
+                            "${"-".repeat((40 - progress * 40).toInt())}] " +
+                            "  $percentProgress % ($stepDurationStr s)")
+
+                    if (percentProgress == 100) println()  // New line for next step
+                    lastPercentProgress = percentProgress
                 }
-                print("$stepName [${"#".repeat((progress * 40).toInt())}" +
-                        "${"-".repeat((40 - progress * 40).toInt())}]" +
-                        " ${floor(progress * 100).toInt()}%")
-                lastStep = step
             }
 
-            println("\nDONE\n")
+            // Done generating font, show duration.
+            val durationStr = numberFmt.format((System.currentTimeMillis() - startTime) / 1000.0)
+            println("DONE in $durationStr s\n")
         }
+
         exitProcess(0)
 
     } catch (e: ParameterException) {
-        println("ERROR: ${e.message}")
+        println("ERROR: ${e.message}\n")
+        commander.usage()
         exitProcess(1)
     }
 }
