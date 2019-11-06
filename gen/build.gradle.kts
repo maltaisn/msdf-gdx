@@ -9,9 +9,12 @@ val mainClassName = "com.maltaisn.msdfgdx.gen.MainKt"
 dependencies {
     val junitVersion: String by project
     val gdxVersion: String by project
+    val coroutinesVersion: String by project
+    val jcommanderVersion: String by project
 
     implementation(kotlin("stdlib"))
-    implementation("com.beust:jcommander:1.71")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
+    implementation("com.beust:jcommander:$jcommanderVersion")
     implementation("com.badlogicgames.gdx:gdx-tools:$gdxVersion")
 
     testImplementation("junit:junit:$junitVersion")
