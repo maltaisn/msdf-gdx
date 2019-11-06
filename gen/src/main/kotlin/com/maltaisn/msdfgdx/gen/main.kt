@@ -63,7 +63,7 @@ fun main(args: Array<String>) {
                 lastStep = step
             }
 
-            println("DONE\n")
+            println("\nDONE\n")
         }
         exitProcess(0)
 

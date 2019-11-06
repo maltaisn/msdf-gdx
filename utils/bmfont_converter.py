@@ -40,8 +40,13 @@ def convert_to_libgdx_bmfont(file: Path, output_file: Optional[Path] = None):
     # Chars
     chars_xml = xml.find("chars")
     output += f"\nchars count={chars_xml.attrib['count']}"
+    chars_bmfont = {}
     for char in chars_xml:
-        output += '\n' + convert_bmfont_element("char", char, CHAR_ATTRS)
+        chars_bmfont[int(char.attrib["id"])] = convert_bmfont_element("char", char, CHAR_ATTRS)
+
+    # Add char tags in sorted order
+    for _, char_bmfont in sorted(chars_bmfont.items()):
+        output += '\n' + char_bmfont
 
     # Kernings, only non-zero ones.
     kernings_xml = [kn for kn in xml.find("kernings") if int(kn.attrib["amount"]) != 0]

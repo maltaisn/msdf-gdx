@@ -41,7 +41,7 @@ class BMFontGenerator(private val fontFile: File,
         paramError("ERROR: Could not load font file: ${e.message}")
     }
 
-    private val glyphs = mutableMapOf<Char, FontGlyph>()
+    private val glyphs = sortedMapOf<Char, FontGlyph>()
 
     private val fontMetrics = Canvas().getFontMetrics(font)
     private val fontRenderContext = FontRenderContext(AffineTransform(), true, true)
@@ -84,11 +84,10 @@ class BMFontGenerator(private val fontFile: File,
                 // Get glyph path and translate it to center it.
                 val tx = -bounds.x + pad
                 val ty = -bounds.y - bounds.height - pad
-                val path = glyphVector.outline as GeneralPath
-                path.transform(AffineTransform.getTranslateInstance(tx, ty))
+                val path = glyphVector.getGlyphOutline(0, tx.toFloat(), ty.toFloat()) as GeneralPath
 
-                glyph.xOffset = -tx.roundToInt()
-                glyph.yOffset = -ty.roundToInt()
+                glyph.xOffset = (bounds.x - pad).roundToInt()
+                glyph.yOffset = (fontMetrics.ascent + bounds.y - pad).roundToInt()
                 glyph.xAdvance = glyphVector.getGlyphMetrics(0).advanceX.roundToInt()
 
                 // Generate main glyph image.
@@ -149,6 +148,7 @@ class BMFontGenerator(private val fontFile: File,
 
         // Remove any existing atlas related files.
         // This is necessary because otherwise the packer tries to add new textures to the existing atlas.
+        File(params.outputDir, fontFile.nameWithoutExtension + ".atlas").delete()
         var pageIndex = 0
         while (true) {
             val pageFile = File(params.outputDir, getFontTextureFileName(pageIndex))
@@ -184,14 +184,15 @@ class BMFontGenerator(private val fontFile: File,
 
         val bmfont = StringBuilder()
         val atlasData = checkNotNull(atlasData)
-        val lineHeight = fontMetrics.ascent + fontMetrics.descent + fontMetrics.leading
 
         // Info tag
-        bmfont.appendln("info font=\"${font.name}\" size=${params.fontSize} bold=${font.isBold} italic=${font.isItalic} " +
+        bmfont.appendln("info face=\"${font.fontName}\" size=${params.fontSize} " +
+                "bold=${if (font.isBold) 1 else 0} italic=${if (font.isItalic) 1 else 0} " +
                 "charset=\"\" unicode=1 stretchH=100 smooth=1 aa=1 padding=0,0,0,0 spacing=0,0 outline=0")
 
         // Common tag
-        bmfont.appendln("common lineHeight=$lineHeight base=${fontMetrics.ascent} scaleW=${params.textureSize[0]} " +
+        bmfont.appendln("common lineHeight=${fontMetrics.height} " +
+                "base=${fontMetrics.ascent} scaleW=${params.textureSize[0]} " +
                 "scaleH=${params.textureSize[1]} pages=${atlasData.pages.size} " +
                 "packed=0 alphaChnl=0 redChnl=0 greenChnl=0 blueChnl=0")
 
@@ -200,13 +201,13 @@ class BMFontGenerator(private val fontFile: File,
             bmfont.appendln("page id=$i file=\"${getFontTextureFileName(i)}\"")
         }
 
-        val kerningsCount = glyphs.values.map { it.kernings.values.count { it != 0 } }.sum()
+        val kerningsCount = glyphs.values.map { it.kernings.values.count { k -> k != 0 } }.sum()
         val elementsCount = glyphs.size + kerningsCount
         var elementsDone = 0f
 
         // Char tags
         bmfont.appendln("chars count=${glyphs.size}")
-        val channels = if (params.alphaFieldType == "none") 7 else 15
+        val channels = if (params.alphaFieldType == "none") FontGlyph.CHANNELS_RGB else FontGlyph.CHANNELS_RGBA
         for ((char, glyph) in glyphs) {
             bmfont.appendln("char id=${char.toInt()} x=${glyph.x} y=${glyph.y} " +
                     "width=${glyph.width} height=${glyph.height} " +
