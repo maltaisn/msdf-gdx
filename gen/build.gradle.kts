@@ -11,11 +11,13 @@ dependencies {
     val gdxVersion: String by project
     val coroutinesVersion: String by project
     val jcommanderVersion: String by project
+    val pngtasticVersion: String by project
 
     implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
     implementation("com.beust:jcommander:$jcommanderVersion")
     implementation("com.badlogicgames.gdx:gdx-tools:$gdxVersion")
+    implementation("com.github.depsypher:pngtastic:$pngtasticVersion")
 
     testImplementation("junit:junit:$junitVersion")
 }

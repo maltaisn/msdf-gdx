@@ -22,6 +22,8 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.g2d.TextureAtlas
 import com.badlogic.gdx.tools.hiero.Kerning
 import com.badlogic.gdx.tools.texturepacker.TexturePacker
+import com.googlecode.pngtastic.core.PngImage
+import com.googlecode.pngtastic.core.PngOptimizer
 import kotlinx.coroutines.*
 import java.awt.Canvas
 import java.awt.Font
@@ -29,7 +31,9 @@ import java.awt.FontFormatException
 import java.awt.font.FontRenderContext
 import java.awt.geom.AffineTransform
 import java.awt.geom.GeneralPath
+import java.io.BufferedInputStream
 import java.io.File
+import java.io.FileInputStream
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.ceil
 import kotlin.math.roundToInt
@@ -44,8 +48,8 @@ import kotlin.math.roundToInt
  * - https://github.com/soimy/msdf-bmfont-xml/blob/ff3669c2bfffd06f29bacedcdf3f073379b45e7e/index.js
  * To guess which font metrics would work but it might not work for all fonts.
  */
-class BMFontGenerator(private val fontFile: File,
-                      private val params: Parameters) {
+class BMFont(private val fontFile: File,
+             private val params: Parameters) {
 
     private val font = try {
         Font.createFont(Font.TRUETYPE_FONT, fontFile).deriveFont(params.fontSize.toFloat())
@@ -65,6 +69,7 @@ class BMFontGenerator(private val fontFile: File,
         generateGlyphs(progressListener)
         pack(progressListener)
         generateFontFile(progressListener)
+        compress(progressListener)
     }
 
 
@@ -175,7 +180,7 @@ class BMFontGenerator(private val fontFile: File,
         File(params.outputDir, fontFile.nameWithoutExtension + ".atlas").delete()
         var pageIndex = 0
         while (true) {
-            val pageFile = File(params.outputDir, getFontTextureFileName(pageIndex))
+            val pageFile = getTextureAtlasFile(pageIndex)
             if (!pageFile.exists()) break
             pageFile.delete()
             pageIndex++
@@ -222,7 +227,7 @@ class BMFontGenerator(private val fontFile: File,
 
         // Page tags
         for (i in 0 until atlasData.pages.size) {
-            bmfont.appendln("page id=$i file=\"${getFontTextureFileName(i)}\"")
+            bmfont.appendln("page id=$i file=\"${getTextureAtlasFile(i).name}\"")
         }
 
         val kerningsCount = glyphs.values.map { it.kernings.values.count { k -> k != 0 } }.sum()
@@ -258,16 +263,39 @@ class BMFontGenerator(private val fontFile: File,
                 .writeText(bmfont.toString())
     }
 
-    private fun getFontTextureFileName(pageIndex: Int) = fontFile.nameWithoutExtension +
-            (if (pageIndex == 0) "" else (pageIndex + 1).toString()) + ".png"
+    private fun compress(progressListener: ProgressListener) {
+        if (params.compressionLevel == 0) {
+            // No compression
+            return
+        }
+        progressListener(GenerationStep.COMPRESS, 0f)
+
+        val atlasData = checkNotNull(atlasData)
+        val pngOptimizer = PngOptimizer()
+        for (i in 0 until atlasData.pages.size) {
+            val file = getTextureAtlasFile(i).absolutePath
+            val inputStream = BufferedInputStream(FileInputStream(file))
+            inputStream.use {
+                val pngImage = PngImage(inputStream)
+                pngImage.fileName = file
+                pngOptimizer.optimize(pngImage, file, false, params.compressionLevel)
+            }
+            progressListener(GenerationStep.COMPRESS, (i + 1).toFloat() / atlasData.pages.size)
+        }
+    }
+
+
+    private fun getTextureAtlasFile(pageIndex: Int) = File(params.outputDir, fontFile.nameWithoutExtension +
+            (if (pageIndex == 0) "" else (pageIndex + 1).toString()) + ".png")
 
 
     enum class GenerationStep {
         GLYPH,
         PACK,
         FONT_FILE,
+        COMPRESS
     }
 
 }
 
-typealias ProgressListener = (step: BMFontGenerator.GenerationStep, progress: Float) -> Unit
+typealias ProgressListener = (step: BMFont.GenerationStep, progress: Float) -> Unit

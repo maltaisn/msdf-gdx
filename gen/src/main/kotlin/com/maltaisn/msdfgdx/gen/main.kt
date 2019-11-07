@@ -17,7 +17,7 @@
 package com.maltaisn.msdfgdx.gen
 
 import com.beust.jcommander.JCommander
-import com.maltaisn.msdfgdx.gen.BMFontGenerator.GenerationStep
+import com.maltaisn.msdfgdx.gen.BMFont.GenerationStep
 import java.io.File
 import java.text.DecimalFormat
 import kotlin.math.floor
@@ -56,7 +56,7 @@ fun main(args: Array<String>) {
             var stepStartTime = 0L
 
             val fontFile = File(fontPath)
-            val bmfont = BMFontGenerator(fontFile, params)
+            val bmfont = BMFont(fontFile, params)
 
             println("Generating distance field font for '${fontFile.name}'.")
 
@@ -71,6 +71,7 @@ fun main(args: Array<String>) {
                         GenerationStep.GLYPH -> "Generating glyph images"
                         GenerationStep.PACK -> "Packing glyphs into atlas"
                         GenerationStep.FONT_FILE -> "Generating BMFont file"
+                        GenerationStep.COMPRESS -> "Compressing images"
                     }.padEnd(30, ' ')
 
                     // Print step name, show progress bar and percent progress.

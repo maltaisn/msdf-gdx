@@ -49,14 +49,17 @@ class Parameters {
     @Parameter(names = ["-d", "--texture-size"], arity = 2, description = "Maximum width and height of generated atlas pages", order = 6)
     var textureSize: List<Int> = listOf(512, 512)
 
-    @Parameter(names = ["-p", "--padding"], description = "Padding between glyphs and on the border of the atlas pages", order = 8)
+    @Parameter(names = ["-p", "--padding"], description = "Padding between glyphs and on the border of the atlas pages", order = 7)
     var padding: Int = 2
 
     @Parameter(names = ["-c", "--charset"], description = "File containing the characters to use (encoded as UTF-8). " +
-            "Can also be one of: ascii, ascii-extended, latin-0, latin-9, windows-1252, extended.", order = 10)
+            "Can also be one of: ascii, ascii-extended, latin-0, latin-9, windows-1252, extended.", order = 8)
     var charset: String = "ascii"
 
-    @Parameter(names = ["-h", "--help"], help = true, order = 11)
+    @Parameter(names = ["--compression-level"], description = "Compression level for generated PNG, from 0 to 9.", order = 9)
+    var compressionLevel = 9
+
+    @Parameter(names = ["-h", "--help"], help = true, order = 10)
     var help = false
 
     /** List of characters from charset. */
