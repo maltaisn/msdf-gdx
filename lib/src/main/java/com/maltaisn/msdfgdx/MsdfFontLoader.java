@@ -32,6 +32,11 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+import com.badlogic.gdx.utils.StreamUtils;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 
 /**
@@ -70,11 +75,12 @@ public class MsdfFontLoader extends AsynchronousAssetLoader<MsdfFont, MsdfFontLo
 
                 TextureLoader.TextureParameter textureParams = new TextureLoader.TextureParameter();
 
-                if (parameter != null) {
-                    textureParams.genMipMaps = parameter.genMipMaps;
-                    textureParams.minFilter = parameter.minFilter;
-                    textureParams.magFilter = parameter.magFilter;
+                if (parameter == null) {
+                    parameter = new MsdfFontParameter();
                 }
+                textureParams.genMipMaps = parameter.genMipMaps;
+                textureParams.minFilter = parameter.minFilter;
+                textureParams.magFilter = parameter.magFilter;
 
                 AssetDescriptor descriptor = new AssetDescriptor<Texture>(resolved, Texture.class, textureParams);
                 deps.add(descriptor);
@@ -91,10 +97,11 @@ public class MsdfFontLoader extends AsynchronousAssetLoader<MsdfFont, MsdfFontLo
 
     @Override
     public MsdfFont loadSync(AssetManager manager, String fileName, FileHandle file, MsdfFontParameter parameter) {
+        // Create bitmap font
         BitmapFont bitmapFont;
         if (parameter != null && parameter.atlasName != null) {
             TextureAtlas atlas = manager.get(parameter.atlasName, TextureAtlas.class);
-            String name = file.sibling(data.imagePaths[0]).nameWithoutExtension().toString();
+            String name = file.sibling(data.imagePaths[0]).nameWithoutExtension();
             TextureAtlas.AtlasRegion region = atlas.findRegion(name);
 
             if (region == null)
@@ -111,11 +118,44 @@ public class MsdfFontLoader extends AsynchronousAssetLoader<MsdfFont, MsdfFontLo
             bitmapFont = new BitmapFont(data, regs, true);
         }
 
+        // Get distance range and glyph size from .fnt file or from parameter.
         if (parameter == null) {
             parameter = new MsdfFontParameter();
         }
-        return new MsdfFont(bitmapFont, parameter.glyphSize, parameter.distanceRange);
+        float glyphSize = parameter.glyphSize;
+        float distanceRange = parameter.distanceRange;
+        final BufferedReader reader = new BufferedReader(new InputStreamReader(file.read()), 512);
+        try {
+            String infoLine = reader.readLine();
+            if (glyphSize == 0f) glyphSize = parseBMFontIntAttribute(infoLine, "size");
+
+            String commonLine = reader.readLine();
+            if (distanceRange == 0f) distanceRange = parseBMFontIntAttribute(commonLine, "distanceRange");
+
+        } catch (IOException e) {
+            throw new GdxRuntimeException("Error loading font file: " + file, e);
+        } finally {
+            StreamUtils.closeQuietly(reader);
+        }
+
+        if (glyphSize <= 0f) throw new GdxRuntimeException("Glyph size must be greater than zero.");
+        if (distanceRange <= 0f) throw new GdxRuntimeException("Distance range must be greater than zero.");
+
+        return new MsdfFont(bitmapFont, glyphSize, distanceRange);
     }
+
+    private int parseBMFontIntAttribute(String line, String name) {
+        int start = line.indexOf(name + '=');
+        if (start == -1) {
+            throw new GdxRuntimeException("Required font parameter '" + name
+                    + "' not specified in loader parameter or font file.");
+        }
+        start += name.length() + 1;
+        int end = line.indexOf(' ', start);
+        if (end == -1) end = line.length();
+        return Integer.parseInt(line.substring(start, end));
+    }
+
 
     public static class MsdfFontParameter extends AssetLoaderParameters<MsdfFont> {
         /**
@@ -155,13 +195,17 @@ public class MsdfFontLoader extends AsynchronousAssetLoader<MsdfFont, MsdfFontLo
 
         /**
          * See {@link MsdfFont#getGlyphSize()}.
+         * Glyph size is automatically set from the {@code size} attribute in the info tag of the {@code .fnt} file.
+         * Set a value different than zero to override the value defined in the file or if it isn't defined in the file.
          */
-        public float glyphSize = 42f;
+        public float glyphSize = 0f;
 
         /**
          * See {@link MsdfFont#getDistanceRange()}.
+         * Distance range may be defined in the {@code .fnt} file with the {@code distanceRange} attribute in common tag.
+         * Set a value different than zero to override the value defined in the file or if it isn't defined in the file.
          */
-        public float distanceRange = 6f;
+        public float distanceRange = 0f;
 
 
         public MsdfFontParameter() {

@@ -223,7 +223,8 @@ class BMFont(private val fontFile: File,
         bmfont.appendln("common lineHeight=${fontMetrics.height} " +
                 "base=${fontMetrics.ascent} scaleW=${params.textureSize[0]} " +
                 "scaleH=${params.textureSize[1]} pages=${atlasData.pages.size} " +
-                "packed=0 alphaChnl=0 redChnl=0 greenChnl=0 blueChnl=0")
+                "packed=0 alphaChnl=0 redChnl=0 greenChnl=0 blueChnl=0 " +
+                "distanceRange=${params.distanceRange}")
 
         // Page tags
         for (i in 0 until atlasData.pages.size) {

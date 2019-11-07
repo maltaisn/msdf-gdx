@@ -51,21 +51,14 @@ class TestApp : ApplicationListener {
         // Load fonts with the asset manager and add them to the skin.
         assetManager.setLoader(MsdfFontLoader(InternalFileHandleResolver()))
 
-        skin.add("roboto-16", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_16,
-                MsdfFontLoader.MsdfFontParameter(16f, 3f)).asset)
-        skin.add("roboto-24", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_24,
-                MsdfFontLoader.MsdfFontParameter(24f, 4f)).asset)
-        skin.add("roboto-32", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_32,
-                MsdfFontLoader.MsdfFontParameter(32f, 5f)).asset)
-        skin.add("roboto-40", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_40,
-                MsdfFontLoader.MsdfFontParameter(40f, 6f)).asset)
-        skin.add("roboto-40-sdf", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_40_SDF,
-                MsdfFontLoader.MsdfFontParameter(40f, 6f)).asset)
-        skin.add("roboto-bold-40", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_BOLD_40,
-                MsdfFontLoader.MsdfFontParameter(40f, 6f)).asset)
+        skin.add("roboto-16", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_16).asset)
+        skin.add("roboto-24", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_24).asset)
+        skin.add("roboto-32", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_32).asset)
+        skin.add("roboto-40", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_40).asset)
+        skin.add("roboto-40-sdf", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_40_SDF).asset)
+        skin.add("roboto-bold-40", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_BOLD_40).asset)
 
-        skin.add("roboto-new", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_NEW,
-                MsdfFontLoader.MsdfFontParameter(32f, 5f)).asset)
+        skin.add("roboto-new", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_NEW).asset)
 
         // Do the stage layout
         val layout = TestLayout(skin)
