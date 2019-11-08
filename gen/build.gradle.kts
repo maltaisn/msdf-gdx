@@ -1,3 +1,4 @@
+import proguard.gradle.ProGuardTask
 import java.util.*
 
 plugins {
@@ -51,4 +52,13 @@ tasks.register<Jar>("dist") {
     manifest {
         attributes["Main-Class"] = mainClassName
     }
+    finalizedBy(tasks.named("shrinkJar"))
+}
+
+tasks.register<ProGuardTask>("shrinkJar") {
+    configuration("proguard-rules.pro")
+    injars("build/libs/gen.jar")
+    outjars("build/libs/gen-release.jar")
+    libraryjars("${System.getProperty("java.home")}/lib/rt.jar")
+    libraryjars(configurations.runtimeClasspath.get().files)
 }
