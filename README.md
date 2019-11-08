@@ -110,7 +110,7 @@ batch.setShader(null);
 ## Generating fonts
 Here are your options:
 - I made a small utility for generating font files. It works great as far as I have tested 
-it but it might not be perfect. [Check it out here][gen-util].
+it but it might not be perfect. **[Check it out here][msdf-gdx-gen]**.
 - You can also generate MSDF and SDF font files with other programs and
 combine them manually with an image editing program. [A tutorial is available here][gen-util-old].
 - The library can also render plain MSDF/SDF just fine and without having to change 
@@ -119,9 +119,13 @@ anything. The alpha channel must be encoded with SDF for shadows to work though.
 ## Changelog
 See [changelog](CHANGELOG.md).
 
-# License
+## License
 - Code is licensed under [Apache License, Version 2.0](LICENSE).
 - Test font (Roboto) is licensed under Apache License, Version 2.0.
+
+## Contributing
+Don't hesitate to open a pull request if you feel like something needs an improvement.
+Just be sure to follow existing code style.
 
 ### References
 - [msdfgen][msdfgen] by Chlumsky who developed the MSDF technique.
@@ -141,5 +145,5 @@ See [changelog](CHANGELOG.md).
 [sdf-libgdx]: https://github.com/libgdx/libgdx/wiki/Distance-field-fonts
 [effects-shader]: https://gist.github.com/Chlumsky/263c960ae0a7df59afc2da4051eb0553
 [better-aa]: https://github.com/Chlumsky/msdfgen/issues/36
-[gen-util]: gen/README.md
+[msdf-gdx-gen]: https://github.com/maltaisn/msdf-gdx-gen
 [gen-util-old]: utils/README.md

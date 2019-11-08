@@ -1,17 +1,14 @@
 buildscript {
     val kotlinVersion: String by project
-    val proguardLocation: String by project
     repositories {
         gradlePluginPortal()
         google()
         mavenCentral()
-        flatDir("dirs" to proguardLocation)
     }
     dependencies {
         classpath("com.android.tools.build:gradle:3.5.2")
         classpath(kotlin("gradle-plugin", kotlinVersion))
         classpath("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.1")
-        classpath(":proguard:")
     }
 }
 
