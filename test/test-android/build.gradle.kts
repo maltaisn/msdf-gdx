@@ -13,12 +13,6 @@ android {
         versionCode = 1
         versionName = "1.0.0"
     }
-    buildTypes {
-        named("release") {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
-        }
-    }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_6
         targetCompatibility = JavaVersion.VERSION_1_6
