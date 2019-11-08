@@ -29,9 +29,10 @@ but there can be more than one.
 - **-d**, **--texture-size**: Maximum width and height of generated atlas pages. Default: 512, 512.
 - **-p**, **--padding**: Padding between glyphs and on the border of the atlas pages. Default: 2.
 - **-c**, **--charset**: File containing the characters to use (encoded as UTF-8). Can also be
-one of: ascii, ascii-extended, latin-0, latin-9, windows-1252, extended. Default: ascii
-- **--compression-level**: Compression level for generated PNG, from 0 to 9. Default: 9
-- **-h**, **--help**: 
+the name of one of the built-in charsets: ascii, ascii-extended, latin-0, latin-9, windows-1252,
+extended. Default: ascii
+- **--compression-level**: Compression level for generated PNG, from 0 to 9. Default: 9.
+- **-h**, **--help**: Show the help message.
 
 #### Examples
 ```

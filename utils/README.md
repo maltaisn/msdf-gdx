@@ -51,6 +51,7 @@ Here's the steps to generate the files from a *font.ttf* font file.
    until it looks good. I added about 5px for a 32px font for reference.
 
 The result should look like this:
+
 ![MSDFA Roboto font](../test/assets/font/roboto-32.png)
 
 The library can also render normal MSDF and SDF but shadows won't work.

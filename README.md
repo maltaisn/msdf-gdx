@@ -110,7 +110,7 @@ batch.setShader(null);
 ## Generating fonts
 Here are your options:
 - I made a small utility for generating font files. It works great as far as I have tested 
-it but it might not be perfect. [Check it out here][gen-util-old].
+it but it might not be perfect. [Check it out here][gen-util].
 - You can also generate MSDF and SDF font files with other programs and
 combine them manually with an image editing program. [A tutorial is available here][gen-util-old].
 - The library can also render plain MSDF/SDF just fine and without having to change 
