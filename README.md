@@ -10,16 +10,16 @@ The library is written in Java but was also designed to be used seemlessly from 
 multi channel (MSDF) and single channel (SDF) distance fields. 
 The MSDF is encoded in 3 channels (RGB) and SDF is encoded in the alpha channel.
 Each distance field has its advantages: MSDF is used to accurately draw glyphs with 
-sharp corners at any size and SDF is used for shadow effects to keep round corners.
-The library can also render normal MSDF and SDF but shadows won't work.
+sharp corners at arbitrarly large sizes and SDF is used for shadow effects to keep 
+round corners.
 
-#### Gradle dependency
+## Usage
+
+##### Gradle dependency
 ```
 implementation("com.maltaisn:msdf-gdx:X.Y.Z")
 ```
 Replace `X.Y.Z` with the lastest version: [![Maven Central](https://img.shields.io/maven-central/v/com.maltaisn/msdf-gdx)](https://search.maven.org/artifact/com.maltaisn/msdf-gdx)
-
-## Usage
 
 #### MsdfFont
 The shader needs a `MsdfFont` object to work, which is a simple wrapper around BitmapFont.
@@ -28,18 +28,17 @@ You can also use the AssetManager to load one:
 ```java
 // Load the font with the asset manager.
 AssetManager manager = new AssetManager();
-manager.setLoader(MsdfFont.class, new MsdfFontLoader(new InternalFileHandleResolver()),
-        new MsdfFontLoader.MsdfFontParameter(32f, 5f));
+manager.setLoader(MsdfFont.class, new MsdfFontLoader(new InternalFileHandleResolver()));
 manager.load("roboto.fnt", MsdfFont.class);
 manager.finishLoading();
 MsdfFont font = manager.get("roboto.png");
 
 // Add the font to a skin.
-Skin skin = new Skin()
+Skin skin = new Skin();
 skin.add("roboto", font);
 ```
-When creating a font, the glyph size in the atlas (the `-s` option used when generating it) 
-and the distance range (the `-r` option) must be specified.
+When creating a font, the glyph size and the distance range must be specified. When using the `MsdfFontLoader`, 
+this can either be specified directly in the *.fnt* file or with a `MsdfFontParameter` loader parameter.
 
 #### FontStyle
 Font styles can be created by code:
@@ -109,64 +108,20 @@ batch.setShader(null);
 ```
 
 ## Generating fonts
-Unfortunately, generating font files is not as straightforward as generating normal SDF
-fonts with Hiero. To generate the fonts, you'll need:
-- [msdf-bmfont-xml][msdf-bmfont-xml], a npm package for generating MSDF font texture atlas and `.fnt` file.
-  This requires npm installed, then running `npm install msdf-bmfont-xml -g` will install the package globally. 
-- Gimp or any image editing tool that can manipulate channels and PNG. This tutorial uses Gimp.
-- [The python script][xml-to-fnt] to convert the XML *.fnt* file into the format that LibGDX's BitmapFont uses.
-  The script requires Python 3.
-
-Here's the steps to generate the files from a *font.ttf* font file.
-
-1. Generate the SDF font with the command below. You can change the glyph size `-s`, 
-   the distance range `-r` (the range in px to encode the distance field) and the charset `-i` file.
-   Here's a [great charset to use][charset] for complete coverage in over 30 languages ([latin-9][charset-wiki]).
-   ```text
-   msdf-bmfont -f xml -i charset.txt -s 32 -r 5 -t sdf --pot --smart-size font.ttf
-   ```
-   If you're planning on using the outer shadow effect, adding a few pixels of padding on the border
-   and between glyph is a good idea. You can do this with the `-p` (padding) and `-b` (border) arguments.
-   Because the shadow has some offset, neighboring glyphs in the atlas may appear if padding is too small.
-
-2. Rename the generated PNG file to *font-sdf.png*
-3. Generate the MSDF font just like the SDF font but changing the `-t` parameter.
-   It is important to keep the same parameters used for the MSDF font since they will be merged afterwards.
-   ```text
-   msdf-bmfont -f xml -i charset.txt -s 32 -r 5 -t msdf --pot --smart-size font.ttf
-   ```
-   
-4. Run the python script to convert the generated *font.fnt* file to LibGDX's format.
-   ```text
-   python bmfont_converter.py font.fnt
-   ```
-  
-5. Use Gimp to merge both distance fields:
-    - Open the MSDF png file.
-    - Add a new layer and copy the SDF png file there.
-    - Select SDF layer and click Layer > Transparency > Alpha to Selection.
-    - Select MSDF layer and click Layer > Mask > Add layer mask...
-    - Initialize layer mask to "Selection" and click Add.
-    - Remove the SDF layer.
-    - Export image to PNG under *font.png*.
-        - "Save color values from transparent pixels" option must be checked.
-        - Reduce size by unchecking options like "Save thumbnail" and increasing compression level.
-6. Make sure the font atlas file name in *.fnt* file is correct. (The `file=...` attribute)
-7. For some reason, the *font.fnt* `base=...` attribute will be too small, so increment it by a few pixels
-   until it looks good. I added about 5px for a 32px font for reference.
-
-The result should look like this:
-
-![MSDFA Roboto font](test/assets/font/roboto-32.png)
-
-The library can also render normal MSDF and SDF but shadows won't work.
+Here are your options:
+- I made a small utility for generating font files. It works great as far as I have tested 
+it but it might not be perfect. [Check it out here][gen-util-old].
+- You can also generate MSDF and SDF font files with other programs and
+combine them manually with an image editing program. [A tutorial is available here][gen-util-old].
+- The library can also render plain MSDF/SDF just fine and without having to change 
+anything. The alpha channel must be encoded with SDF for shadows to work though.
 
 ## Changelog
 See [changelog](CHANGELOG.md).
 
 # License
 - Code is licensed under [Apache License, Version 2.0](LICENSE).
-- Test font (roboto) is licensed under Apache License, Version 2.0.
+- Test font (Roboto) is licensed under Apache License, Version 2.0.
 
 ### References
 - [msdfgen][msdfgen] by Chlumsky who developed the MSDF technique.
@@ -186,3 +141,5 @@ See [changelog](CHANGELOG.md).
 [sdf-libgdx]: https://github.com/libgdx/libgdx/wiki/Distance-field-fonts
 [effects-shader]: https://gist.github.com/Chlumsky/263c960ae0a7df59afc2da4051eb0553
 [better-aa]: https://github.com/Chlumsky/msdfgen/issues/36
+[gen-util]: gen/README.md
+[gen-util-old]: utils/README.md

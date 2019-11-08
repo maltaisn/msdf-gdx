@@ -45,9 +45,10 @@ tasks.register<JavaExec>("run") {
 
 // Use this task to create a fat jar.
 // The jar file is generated in test/test-desktop/build/libs
-tasks.register<Jar>("dist") {
+val dist = tasks.register<Jar>("dist") {
     from(files(sourceSets.main.get().output.classesDirs))
     from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    archiveBaseName.set("msdfgen")
 
     manifest {
         attributes["Main-Class"] = mainClassName
@@ -56,9 +57,10 @@ tasks.register<Jar>("dist") {
 }
 
 tasks.register<ProGuardTask>("shrinkJar") {
+    val distFile = dist.get().archiveFile.get().asFile
     configuration("proguard-rules.pro")
-    injars("build/libs/gen.jar")
-    outjars("build/libs/gen-release.jar")
+    injars(distFile)
+    outjars(distFile.resolveSibling("msdfgen-release.jar"))
     libraryjars("${System.getProperty("java.home")}/lib/rt.jar")
     libraryjars(configurations.runtimeClasspath.get().files)
 }

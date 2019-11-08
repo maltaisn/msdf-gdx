@@ -43,7 +43,7 @@ class Parameters {
     @Parameter(names = ["-s", "--font-size"], description = "Font size for generated textures", order = 4)
     var fontSize: Int = 32
 
-    @Parameter(names = ["-r", "--distance-range"], description = "Distance range in which SDF is encoded.", order = 5)
+    @Parameter(names = ["-r", "--distance-range"], description = "Distance range in which SDF is encoded", order = 5)
     var distanceRange: Int = 5
 
     @Parameter(names = ["-d", "--texture-size"], arity = 2, description = "Maximum width and height of generated atlas pages", order = 6)
@@ -56,10 +56,10 @@ class Parameters {
             "Can also be one of: ascii, ascii-extended, latin-0, latin-9, windows-1252, extended.", order = 8)
     var charset: String = "ascii"
 
-    @Parameter(names = ["--compression-level"], description = "Compression level for generated PNG, from 0 to 9.", order = 9)
+    @Parameter(names = ["--compression-level"], description = "Compression level for generated PNG, from 0 to 9", order = 9)
     var compressionLevel = 9
 
-    @Parameter(names = ["-h", "--help"], help = true, order = 10)
+    @Parameter(names = ["-h", "--help"], description = "Show help message", help = true, order = 10)
     var help = false
 
     /** List of characters from charset. */
