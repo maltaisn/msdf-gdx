@@ -21,6 +21,18 @@ implementation("com.maltaisn:msdf-gdx:X.Y.Z")
 ```
 Replace `X.Y.Z` with the lastest version: [![Maven Central](https://img.shields.io/maven-central/v/com.maltaisn/msdf-gdx)](https://search.maven.org/artifact/com.maltaisn/msdf-gdx)
 
+###### HTML
+
+You need to add the sources dependency to the html project (`project(":html")`) inside `build.gradle`:
+````groovy
+implementation("com.maltaisn:msdf-gdx:X.Y.Z:sources")
+````
+
+You need also to add a `inherit` to your `GdxDefinition.gwt.xml` file:
+````xml
+<inherits name="com.maltaisn.msdf-gdx"/>
+````
+
 #### MsdfFont
 The shader needs a `MsdfFont` object to work, which is a simple wrapper around BitmapFont.
 The `MsdfFont` can be created from an existing BitmapFont or from a *.fnt* file. 
