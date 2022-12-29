@@ -16,27 +16,11 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_6
-    targetCompatibility = JavaVersion.VERSION_1_6
+    sourceCompatibility = JavaVersion.VERSION_1_7
+    targetCompatibility = JavaVersion.VERSION_1_7
 
-    sourceSets {
-        main {
-            // This is needed to keep shader files in classpath.
-            resources.srcDir("src/main/java")
-        }
-    }
-}
-
-// Maven publishing
-tasks.register<Jar>("sourcesJar") {
-    dependsOn(tasks.classes)
-    from(sourceSets.main.get().allSource)
-    archiveClassifier.set("sources")
-}
-
-tasks.register<Jar>("javadocJar") {
-    from(tasks.javadoc.get().destinationDir!!.path)
-    archiveClassifier.set("javadoc")
+    withJavadocJar()
+    withSourcesJar()
 }
 
 publishing {
@@ -72,8 +56,6 @@ publishing {
             }
 
             from(components["java"])
-            artifact(tasks["sourcesJar"])
-            artifact(tasks["javadocJar"])
         }
     }
     repositories {
