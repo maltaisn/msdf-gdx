@@ -4,18 +4,19 @@ plugins {
 }
 
 android {
-    buildToolsVersion("29.0.2")
-    compileSdkVersion(29)
+    buildToolsVersion = "30.0.3"
+    compileSdk = 33
+    namespace = "com.example.android"
     defaultConfig {
         applicationId = "com.maltaisn.msdfgdx.test.android"
-        minSdkVersion(14)
-        targetSdkVersion(29)
+        minSdk = 14
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0.0"
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_6
-        targetCompatibility = JavaVersion.VERSION_1_6
+        sourceCompatibility = JavaVersion.VERSION_1_7
+        targetCompatibility = JavaVersion.VERSION_1_7
     }
     sourceSets {
         named("main") {

@@ -6,15 +6,15 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:3.5.2")
+        classpath("com.android.tools.build:gradle:7.3.1")
         classpath(kotlin("gradle-plugin", kotlinVersion))
-        classpath("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.21.1")
+        classpath("io.codearte.gradle.nexus:gradle-nexus-staging-plugin:0.30.0")
     }
 }
 
 plugins {
     base
-    id("io.codearte.nexus-staging") version "0.21.1"
+    id("io.codearte.nexus-staging") version "0.30.0"
 }
 
 allprojects {
