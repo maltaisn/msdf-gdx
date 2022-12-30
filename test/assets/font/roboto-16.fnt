@@ -143,7 +143,7 @@ char id=117 x=190 y=53 width=9 height=11 xoffset=0 yoffset=5 xadvance=9 page=0 c
 char id=238 x=194 y=65 width=7 height=14 xoffset=-1 yoffset=1 xadvance=4 page=0 chnl=15
 char id=239 x=195 y=26 width=7 height=14 xoffset=-2 yoffset=1 xadvance=4 page=0 chnl=15
 char id=102 x=200 y=41 width=7 height=14 xoffset=-1 yoffset=1 xadvance=6 page=0 chnl=15
-char id=116 x=34 y=0 width=7 height=13 xoffset=-1 yoffset=3 xadvance=5 page=0 chnl=15
+char id=116 x=34 y=0 width=7 height=13 xoffset=-1 yoffset=4 xadvance=5 page=0 chnl=15
 char id=122 x=202 y=12 width=9 height=10 xoffset=0 yoffset=5 xadvance=8 page=0 chnl=15
 char id=118 x=203 y=0 width=9 height=10 xoffset=-1 yoffset=5 xadvance=8 page=0 chnl=15
 char id=120 x=203 y=23 width=9 height=10 xoffset=-1 yoffset=5 xadvance=8 page=0 chnl=15

@@ -58,7 +58,7 @@ class TestApp : ApplicationListener {
         skin.add("roboto-40-sdf", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_40_SDF).asset)
         skin.add("roboto-bold-40", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_BOLD_40).asset)
 
-        skin.add("roboto-new", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_NEW).asset)
+        skin.add("roboto-regular", assetManager.loadOnDemand<MsdfFont>(TestRes.FONT_ROBOTO_REGULAR).asset)
 
         // Do the stage layout
         val layout = TestLayout(skin)

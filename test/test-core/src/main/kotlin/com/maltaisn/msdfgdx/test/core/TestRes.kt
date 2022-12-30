@@ -31,6 +31,7 @@ object TestRes {
     const val FONT_ROBOTO_40 = "font/roboto-40.fnt"
     const val FONT_ROBOTO_40_SDF = "font/roboto-40-sdf.fnt"
     const val FONT_ROBOTO_BOLD_40 = "font/roboto-bold-40.fnt"
-    const val FONT_ROBOTO_NEW = "font/roboto-new.fnt"
+
+    const val FONT_ROBOTO_REGULAR = "font/roboto-regular.fnt"
 
 }

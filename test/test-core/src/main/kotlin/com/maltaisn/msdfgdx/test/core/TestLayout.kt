@@ -120,7 +120,7 @@ class TestLayout(skin: Skin) : Table(skin) {
                     label.txt = text
                 }
             }
-            addEnumBtn("Font", FONT_NAMES, initialIndex = 2) { _, fontName ->
+            addEnumBtn("Font", FONT_NAMES, initialIndex = 0) { _, fontName ->
                 fontStyle.fontName = fontName
                 updateFontStyle()
             }
@@ -229,11 +229,12 @@ class TestLayout(skin: Skin) : Table(skin) {
                 128f, 196f, 256f, 384f, 512f)
 
         private val TEXTS = listOf("The quick brown fox jumps over the lazy dog",
+                "AaBbiILCcdD",
                 "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz",
                 "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýÿŸþŽžŠšµŒœ",
                 "!\"#\$%&'()*+,-./:;<=>?[\\]^_`{|}~¡¢£€¥§©ª«¬®¯°±²³¶·¹º»¿×")
 
-        private val FONT_NAMES = listOf("roboto-new", "roboto-16", "roboto-24", "roboto-32",
+        private val FONT_NAMES = listOf("roboto-regular", "roboto-16", "roboto-24", "roboto-32",
                 "roboto-40", "roboto-40-sdf", "roboto-bold-40")
 
         private val FONT_COLORS = listOf(Color.BLACK, Color.WHITE, Color.BLUE, Color.RED)
