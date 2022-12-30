@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    buildToolsVersion = "30.0.3"
+    buildToolsVersion = "33.0.1"
     compileSdk = 33
     namespace = "com.example.android"
     defaultConfig {
@@ -15,8 +15,8 @@ android {
         versionName = "1.0.0"
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_7
-        targetCompatibility = JavaVersion.VERSION_1_7
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     sourceSets {
         named("main") {
@@ -36,7 +36,6 @@ dependencies {
 
     implementation("com.badlogicgames.gdx:gdx-backend-android:$gdxVersion")
 
-    natives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi")
     natives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-armeabi-v7a")
     natives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-arm64-v8a")
     natives("com.badlogicgames.gdx:gdx-platform:$gdxVersion:natives-x86")
