@@ -10,14 +10,14 @@ dependencies {
 
     implementation("com.badlogicgames.gdx:gdx:$gdxVersion")
 
-    compileOnly("org.jetbrains:annotations:17.0.0")
+    compileOnly("org.jetbrains:annotations:23.1.0")
 
     testImplementation("junit:junit:$junitVersion")
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_7
-    targetCompatibility = JavaVersion.VERSION_1_7
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
 
     withJavadocJar()
     withSourcesJar()
@@ -73,4 +73,10 @@ publishing {
 
 signing {
     sign(publishing.publications["maven"])
+}
+
+tasks.javadoc {
+    if (JavaVersion.current().isJava9Compatible) {
+        (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
+    }
 }
