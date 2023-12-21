@@ -3,4 +3,7 @@
         "http://www.gwtproject.org/doctype/2.8.2/gwt-module.dtd">
 <module>
     <source path="msdfgdx" />
+
+    <extend-configuration-property name="gdx.files.classpath" value="font.frag" />
+    <extend-configuration-property name="gdx.files.classpath" value="font.vert" />
 </module>
